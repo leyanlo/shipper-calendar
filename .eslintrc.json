@@ -16,7 +16,6 @@
     ],
     "no-plusplus": ["error", {"allowForLoopAfterthoughts": true}],
     "no-unused-expressions": ["error", {"allowTaggedTemplates": true}],
-    "react/destructuring-assignment": "none",
     "react/jsx-filename-extension": "none",
     "react/no-array-index-key": "none",
     "sort-imports-es6-autofix/sort-imports-es6": [
