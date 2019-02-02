@@ -129,7 +129,7 @@ class Calendar extends React.PureComponent {
       this.setState({selected: [...selected, i]});
     } else {
       currentTarget.blur();
-      this.setState({selected: [...selected].pop()});
+      this.setState({selected: selected.slice(0, selected.length - 1)});
     }
   };
 
