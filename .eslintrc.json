@@ -1,0 +1,31 @@
+{
+  "root": true,
+  "extends": ["airbnb", "plugin:prettier/recommended", "prettier/react"],
+  "env": {
+    "browser": true
+  },
+  "parser": "babel-eslint",
+  "plugins": ["sort-imports-es6-autofix"],
+  "rules": {
+    "import/order": [
+      "error",
+      {
+        "groups": [["builtin", "external", "internal"]],
+        "newlines-between": "always"
+      }
+    ],
+    "no-plusplus": ["error", {"allowForLoopAfterthoughts": true}],
+    "no-unused-expressions": ["error", {"allowTaggedTemplates": true}],
+    "react/destructuring-assignment": "none",
+    "react/jsx-filename-extension": "none",
+    "react/no-array-index-key": "none",
+    "sort-imports-es6-autofix/sort-imports-es6": [
+      "error",
+      {
+        "ignoreCase": false,
+        "ignoreMemberSort": false,
+        "memberSyntaxSortOrder": ["none", "all", "multiple", "single"]
+      }
+    ]
+  }
+}
