@@ -2,49 +2,57 @@
 @import '../node_modules/normalize.css/normalize.css';
 
 @font-face {
-  font-family: "UberMove-Regular";
+  font-family: 'UberMove-Regular';
   font-display: fallback;
-  src: url("fonts/UberMove-Regular.woff2") format("woff2"), url("fonts/UberMove-Regular.woff") format("woff");
+  src: url('fonts/UberMove-Regular.woff2') format('woff2'),
+    url('fonts/UberMove-Regular.woff') format('woff');
 }
 
 @font-face {
-  font-family: "UberMove-Light";
+  font-family: 'UberMove-Light';
   font-display: fallback;
-  src: url("fonts/UberMove-Light.woff2") format("woff2"), url("fonts/UberMove-Light.woff") format("woff");
+  src: url('fonts/UberMove-Light.woff2') format('woff2'),
+    url('fonts/UberMove-Light.woff') format('woff');
 }
 
 @font-face {
-  font-family: "UberMove-Medium";
+  font-family: 'UberMove-Medium';
   font-display: fallback;
-  src: url("fonts/UberMove-Medium.woff2") format("woff2"), url("fonts/UberMove-Medium.woff") format("woff");
+  src: url('fonts/UberMove-Medium.woff2') format('woff2'),
+    url('fonts/UberMove-Medium.woff') format('woff');
 }
 
 @font-face {
-  font-family: "UberMove-Bold";
+  font-family: 'UberMove-Bold';
   font-display: fallback;
-  src: url("fonts/UberMove-Bold.woff2") format("woff2"), url("fonts/UberMove-Bold.woff") format("woff");
+  src: url('fonts/UberMove-Bold.woff2') format('woff2'),
+    url('fonts/UberMove-Bold.woff') format('woff');
 }
 
 @font-face {
-  font-family: "UberMoveText-Regular";
+  font-family: 'UberMoveText-Regular';
   font-display: fallback;
-  src: url("fonts/UberMoveText-Regular.woff2") format("woff2"), url("fonts/UberMoveText-Regular.woff") format("woff");
+  src: url('fonts/UberMoveText-Regular.woff2') format('woff2'),
+    url('fonts/UberMoveText-Regular.woff') format('woff');
 }
 
 @font-face {
-  font-family: "UberMoveText-Light";
+  font-family: 'UberMoveText-Light';
   font-display: fallback;
-  src: url("fonts/UberMoveText-Light.woff2") format("woff2"), url("fonts/UberMoveText-Light.woff") format("woff");
+  src: url('fonts/UberMoveText-Light.woff2') format('woff2'),
+    url('fonts/UberMoveText-Light.woff') format('woff');
 }
 
 @font-face {
-  font-family: "UberMoveText-Medium";
+  font-family: 'UberMoveText-Medium';
   font-display: fallback;
-  src: url("fonts/UberMoveText-Medium.woff2") format("woff2"), url("fonts/UberMoveText-Medium.woff") format("woff");
+  src: url('fonts/UberMoveText-Medium.woff2') format('woff2'),
+    url('fonts/UberMoveText-Medium.woff') format('woff');
 }
 
 @font-face {
-  font-family: "UberMoveText-Bold";
+  font-family: 'UberMoveText-Bold';
   font-display: fallback;
-  src: url("fonts/UberMoveText-Bold.woff2") format("woff2"), url("fonts/UberMoveText-Bold.woff") format("woff");
+  src: url('fonts/UberMoveText-Bold.woff2') format('woff2'),
+    url('fonts/UberMoveText-Bold.woff') format('woff');
 }
