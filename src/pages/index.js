@@ -1,4 +1,3 @@
-import * as React from 'react';
 import {Block} from 'baseui/block';
 import {
   Button,
@@ -9,7 +8,7 @@ import {
 import {LightThemeMove, ThemeProvider, styled} from 'baseui';
 import {Client as Styletron} from 'styletron-engine-atomic';
 import {Provider as StyletronProvider} from 'styletron-react';
-import ReactDOM from 'react-dom';
+import React from 'react';
 
 const engine = new Styletron();
 
@@ -200,8 +199,7 @@ class Calendar extends React.PureComponent {
   }
 }
 
-const rootElement = document.getElementById('root');
-ReactDOM.render(
+export default () => (
   <StyletronProvider value={engine}>
     <ThemeProvider
       theme={{
@@ -215,6 +213,5 @@ ReactDOM.render(
         <Calendar />
       </Main>
     </ThemeProvider>
-  </StyletronProvider>,
-  rootElement
+  </StyletronProvider>
 );
