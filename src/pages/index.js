@@ -5,6 +5,7 @@ import {
   StyledBaseButton,
   StyledStartEnhancer,
 } from 'baseui/button';
+import {H6} from 'baseui/typography';
 import {LightThemeMove, ThemeProvider, styled} from 'baseui';
 import React from 'react';
 
@@ -15,7 +16,22 @@ const Main = styled('main', {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+  backgroundColor: '#FAFAFA',
 });
+
+const Section = styled('section', ({$theme}) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  width: '100%',
+  maxWidth: '760px',
+  justifyContent: 'center',
+  backgroundColor: $theme.colors.white,
+  paddingTop: $theme.sizing.scale900,
+  paddingRight: $theme.sizing.scale1200,
+  paddingBottom: $theme.sizing.scale900,
+  paddingLeft: $theme.sizing.scale1200,
+  boxShadow: $theme.lighting.shadow700,
+}));
 
 const ResetButton = styled(StyledBaseButton, ({$theme, disabled}) => ({
   ...$theme.typography.font350,
@@ -139,34 +155,41 @@ class Calendar extends React.PureComponent {
   render() {
     const {dates, hovered, selected} = this.state;
     return (
-      <Block
-        display="flex"
-        flexDirection="column"
-        width="100%"
-        maxWidth="760px"
-      >
-        <Button
-          disabled={!selected.length}
-          kind={KIND.minimal}
-          onClick={this.onClickReset}
-          startEnhancer={
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M8.66667 2C5.33333 2 2.66667 4.66667 2.66667 8C2.66667 8.13333 2.66667 8.26667 2.66667 8.33333L0 6.19999V8.73334L4 11.8667L8 8.73334V6.19999L4.73333 8.73334C4.66667 8.46667 4.66667 8.2 4.66667 7.93333C4.66667 5.73333 6.46667 3.93333 8.66667 3.93333C10.8667 3.93333 12.6667 5.73333 12.6667 7.93333C12.6667 10.1333 10.8667 11.9333 8.66667 11.9333V13.9333C12 13.9333 14.6667 11.2667 14.6667 7.93333C14.6667 4.6 12 2 8.66667 2Z"
-                fill="#276EF1"
-              />
-            </svg>
-          }
-          overrides={{BaseButton: ResetButton, StartEnhancer: ResetButtonIcon}}
+      <Section>
+        <Block
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
         >
-          Reset Dates
-        </Button>
+          <H6 $as="span" color={LightThemeMove.colors.mono800}>
+            Select shipment dates
+          </H6>
+          <Button
+            disabled={!selected.length}
+            kind={KIND.minimal}
+            onClick={this.onClickReset}
+            startEnhancer={
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M8.66667 2C5.33333 2 2.66667 4.66667 2.66667 8C2.66667 8.13333 2.66667 8.26667 2.66667 8.33333L0 6.19999V8.73334L4 11.8667L8 8.73334V6.19999L4.73333 8.73334C4.66667 8.46667 4.66667 8.2 4.66667 7.93333C4.66667 5.73333 6.46667 3.93333 8.66667 3.93333C10.8667 3.93333 12.6667 5.73333 12.6667 7.93333C12.6667 10.1333 10.8667 11.9333 8.66667 11.9333V13.9333C12 13.9333 14.6667 11.2667 14.6667 7.93333C14.6667 4.6 12 2 8.66667 2Z"
+                  fill="#276EF1"
+                />
+              </svg>
+            }
+            overrides={{
+              BaseButton: ResetButton,
+              StartEnhancer: ResetButtonIcon,
+            }}
+          >
+            Reset Dates
+          </Button>
+        </Block>
         <Grid>
           {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, i) => (
             <Day key={i}>{day}</Day>
@@ -190,7 +213,7 @@ class Calendar extends React.PureComponent {
             </Date>
           ))}
         </Grid>
-      </Block>
+      </Section>
     );
   }
 }
