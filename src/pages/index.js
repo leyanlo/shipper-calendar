@@ -6,11 +6,7 @@ import {
   StyledStartEnhancer,
 } from 'baseui/button';
 import {LightThemeMove, ThemeProvider, styled} from 'baseui';
-import {Client as Styletron} from 'styletron-engine-atomic';
-import {Provider as StyletronProvider} from 'styletron-react';
 import React from 'react';
-
-const engine = new Styletron();
 
 const Main = styled('main', {
   fontFamily: 'UberMove-Regular',
@@ -200,18 +196,16 @@ class Calendar extends React.PureComponent {
 }
 
 export default () => (
-  <StyletronProvider value={engine}>
-    <ThemeProvider
-      theme={{
-        ...LightThemeMove,
-        media: {
-          tablet: '@media only screen and (min-width: 769px)',
-        },
-      }}
-    >
-      <Main>
-        <Calendar />
-      </Main>
-    </ThemeProvider>
-  </StyletronProvider>
+  <ThemeProvider
+    theme={{
+      ...LightThemeMove,
+      media: {
+        tablet: '@media only screen and (min-width: 769px)',
+      },
+    }}
+  >
+    <Main>
+      <Calendar />
+    </Main>
+  </ThemeProvider>
 );

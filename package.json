@@ -19,6 +19,7 @@
   "dependencies": {
     "baseui": "^5.12.1",
     "gatsby": "^2.0.111",
+    "gatsby-plugin-styletron": "^3.0.4",
     "normalize.css": "^8.0.1",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
