@@ -62,11 +62,30 @@ const Day = styled('div', ({$theme}) => ({
   color: $theme.colors.mono600,
 }));
 
-const Date = styled('button', ({$date, $disabled, $style, $theme}) => ({
+// From https://css-tricks.com/aspect-ratio-boxes/
+export const AspectRatioBox = styled('div', () => ({
+  width: '100%',
+  position: 'relative',
+  '::before': {
+    content: '""',
+    width: '1px',
+    marginLeft: '-1px',
+    float: 'left',
+    height: 0,
+    paddingTop: '100%',
+  },
+  '::after': {
+    content: '""',
+    display: 'table',
+    clear: 'both',
+  },
+}));
+
+const Date = styled('button', ({$date, $disabled, $price, $style, $theme}) => ({
   ...$theme.typography.font200,
   fontVariantNumeric: 'tabular-nums',
   color: $theme.colors.mono800,
-  position: 'relative',
+  position: 'absolute',
   width: '100%',
   height: '100%',
   padding: 0,
@@ -85,22 +104,27 @@ const Date = styled('button', ({$date, $disabled, $style, $theme}) => ({
     ...$theme.typography.font450,
     alignItems: 'center',
   },
-  '::before': {
-    content: '""',
-    display: 'inline-block',
-    width: '1px',
-    height: 0,
-    paddingBottom: '100%',
-  },
+  ...($price
+    ? {
+        '::before': {
+          content: `"${$price}"`,
+          position: 'absolute',
+          bottom: '7px',
+          [$theme.media.tablet]: {
+            bottom: 'auto',
+          },
+        },
+      }
+    : {}),
   '::after': {
     ...$theme.typography.font350,
     content: `"${$date.content}"`,
     ...($date.color ? {color: $date.color} : {}),
     position: 'absolute',
     top: '7px',
-    right: '7px',
     [$theme.media.tablet]: {
       ...$theme.typography.font300,
+      right: '7px',
     },
   },
 }));
@@ -151,7 +175,7 @@ class Calendar extends React.PureComponent {
       return ret;
     }
 
-    ret.children = `$${d.price}`;
+    ret.price = `$${d.price}`;
 
     // Process quintile
     switch (d.quintile) {
@@ -169,7 +193,7 @@ class Calendar extends React.PureComponent {
     // Process selected
     if (selected.length) {
       if (i < selected[0].pickup) {
-        ret.children = '';
+        ret.price = '';
         ret.style.backgroundColor = LightThemeMove.colors.white;
         ret.disabled = true;
       }
@@ -180,12 +204,12 @@ class Calendar extends React.PureComponent {
         } else if (pickup < i && (i < pickup + dateRange || i <= dropoff)) {
           ret.style.backgroundColor = LightThemeMove.colors.primary;
           ret.style.color = LightThemeMove.colors.white;
-          ret.children = '';
+          ret.price = '';
         }
       });
       const lastSelected = selected[selected.length - 1];
       if (!lastSelected.dropoff && i > lastSelected.pickup + dateRange - 1) {
-        ret.children = `+$${150 * (i - lastSelected.pickup - dateRange + 1)}`;
+        ret.price = `+$${150 * (i - lastSelected.pickup - dateRange + 1)}`;
         ret.style.color = LightThemeMove.colors.negative;
         ret.date.color = LightThemeMove.colors.mono800;
         ret.style.backgroundColor = LightThemeMove.colors.white;
@@ -194,10 +218,10 @@ class Calendar extends React.PureComponent {
         if (i === lastSelected.pickup) {
           const newPrice =
             d.price + 150 * (1 + lastSelected.dropoff - i - dateRange);
-          ret.children = `$${newPrice}`;
+          ret.price = `$${newPrice}`;
         } else if (i > lastSelected.dropoff) {
           ret.style.backgroundColor = LightThemeMove.colors.white;
-          ret.children = '';
+          ret.price = '';
         }
       }
     }
@@ -211,19 +235,19 @@ class Calendar extends React.PureComponent {
         } else if (hovered < i && i < hovered + dateRange) {
           ret.style.backgroundColor = LightThemeMove.colors.primary;
           ret.style.color = LightThemeMove.colors.white;
-          ret.children = '';
+          ret.price = '';
         }
       } else {
         const lastSelected = selected[selected.length - 1];
         if (!lastSelected.dropoff) {
           if (i === lastSelected.pickup && i + dateRange <= hovered) {
             const newPrice = d.price + 150 * (1 + hovered - i - dateRange);
-            ret.children = `$${newPrice}`;
+            ret.price = `$${newPrice}`;
           } else if (i > lastSelected.pickup && i <= hovered) {
             ret.style.backgroundColor = LightThemeMove.colors.primary;
             ret.style.color = LightThemeMove.colors.white;
             ret.date.color = LightThemeMove.colors.white;
-            ret.children = '';
+            ret.price = '';
           }
         }
       }
@@ -235,20 +259,21 @@ class Calendar extends React.PureComponent {
   getDate = (d, i) => {
     const dateAttributes = this.getDateAttributes(d, i);
     return (
-      <Date
-        $date={dateAttributes.date}
-        $disabled={dateAttributes.disabled}
-        $style={dateAttributes.style}
-        disabled={dateAttributes.disabled}
-        key={i}
-        onBlur={this.onHover(null)}
-        onClick={this.onClickDate(i)}
-        onFocus={this.onHover(i)}
-        onMouseOut={this.onHover(null)}
-        onMouseOver={this.onHover(i)}
-      >
-        {dateAttributes.children}
-      </Date>
+      <AspectRatioBox>
+        <Date
+          $date={dateAttributes.date}
+          $disabled={dateAttributes.disabled}
+          $price={dateAttributes.price}
+          $style={dateAttributes.style}
+          disabled={dateAttributes.disabled}
+          key={i}
+          onBlur={this.onHover(null)}
+          onClick={this.onClickDate(i)}
+          onFocus={this.onHover(i)}
+          onMouseOut={this.onHover(null)}
+          onMouseOver={this.onHover(i)}
+        />
+      </AspectRatioBox>
     );
   };
 

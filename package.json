@@ -19,10 +19,12 @@
   "dependencies": {
     "baseui": "^5.12.1",
     "gatsby": "^2.0.111",
+    "gatsby-cli": "^2.4.9",
     "gatsby-plugin-manifest": "^2.0.17",
     "gatsby-plugin-offline": "^2.0.22",
     "gatsby-plugin-styletron": "^3.0.4",
     "normalize.css": "^8.0.1",
+    "prop-types": "^15.6.2",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
     "styletron-engine-atomic": "^1.0.13",
