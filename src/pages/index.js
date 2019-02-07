@@ -297,7 +297,7 @@ class Calendar extends React.PureComponent {
   };
 
   onClickReset = () => {
-    this.setState({selected: []});
+    this.setState({hovered: null, selected: []});
   };
 
   onHover = (i) => () => {
