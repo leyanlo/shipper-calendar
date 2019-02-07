@@ -57,53 +57,39 @@ const Day = styled('div', ({$theme}) => ({
   color: $theme.colors.mono600,
 }));
 
-const quintileStyles = {
-  1: {backgroundColor: 'rgba(39,110,241,0.44)'},
-  2: {backgroundColor: 'rgba(39,110,241,0.08)'},
-};
-
-const Date = styled(
-  'button',
-  ({$date, $disabled, $hovered, $quintile, $selected, $theme}) => ({
-    ...$theme.typography.font450,
-    color: $theme.colors.mono800,
-    position: 'relative',
-    width: '100%',
-    height: '100%',
-    padding: 0,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    border: `1px solid ${$theme.colors.mono300}`,
-    ...(quintileStyles[$quintile] || {}),
-    ...($disabled
-      ? {color: $theme.colors.mono600, backgroundColor: $theme.colors.mono200}
-      : {
-          cursor: 'pointer',
-          ...($hovered || $selected
-            ? {
-                color: LightThemeMove.colors.white,
-                backgroundColor: 'rgb(39,110,241)',
-              }
-            : {}),
-        }),
-    ':focus': {outline: 'none'},
-    '::before': {
-      content: '""',
-      display: 'inline-block',
-      width: '1px',
-      height: 0,
-      paddingBottom: '100%',
-    },
-    '::after': {
-      ...$theme.typography.font300,
-      content: `"${$date}"`,
-      position: 'absolute',
-      top: '7px',
-      right: '7px',
-    },
-  })
-);
+const Date = styled('button', ({$date, $disabled, $style, $theme}) => ({
+  ...$theme.typography.font450,
+  color: $theme.colors.mono800,
+  position: 'relative',
+  width: '100%',
+  height: '100%',
+  padding: 0,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  border: `1px solid ${$theme.colors.mono300}`,
+  ...($disabled
+    ? {}
+    : {
+        cursor: 'pointer',
+        ...$style,
+      }),
+  ':focus': {outline: 'none'},
+  '::before': {
+    content: '""',
+    display: 'inline-block',
+    width: '1px',
+    height: 0,
+    paddingBottom: '100%',
+  },
+  '::after': {
+    ...$theme.typography.font300,
+    content: `"${$date}"`,
+    position: 'absolute',
+    top: '7px',
+    right: '7px',
+  },
+}));
 
 class Calendar extends React.PureComponent {
   state = {
@@ -130,17 +116,117 @@ class Calendar extends React.PureComponent {
       {date: '25'},
       {date: '26'},
     ],
+    dateRanges: [2, 2],
     hovered: null,
     selected: [],
   };
 
-  onClickDate = (i) => ({currentTarget}) => {
+  getDateRange = () => {
+    const {dateRanges, selected} = this.state;
+    return dateRanges[selected.length];
+  };
+
+  getDateAttributes = (d, i) => {
+    const {hovered, selected} = this.state;
+
+    const ret = {
+      style: {},
+    };
+
+    // Process price
+    if (!d.price) {
+      ret.disabled = true;
+      ret.style.color = LightThemeMove.colors.mono600;
+      ret.style.backgroundColor = LightThemeMove.colors.mono200;
+      return ret;
+    }
+
+    ret.children =
+      d.price && `$${Math.floor(d.price / 1000)},${d.price % 1000}`;
+
+    // Process quintile
+    switch (d.quintile) {
+      case 1:
+        ret.style.backgroundColor = LightThemeMove.colors.primary50;
+        break;
+      case 2:
+        ret.style.backgroundColor = LightThemeMove.colors.primary200;
+        break;
+      default:
+        ret.style.backgroundColor = LightThemeMove.colors.white;
+        break;
+    }
+
+    const dateRange = this.getDateRange();
+
+    // Process selected
+    if (selected.length) {
+      if (i < selected[0].pickup) {
+        ret.children = '';
+        ret.disabled = true;
+      }
+      selected.forEach(({pickup, dropoff}) => {
+        if (pickup === i) {
+          ret.style.backgroundColor = LightThemeMove.colors.primary;
+          ret.style.color = LightThemeMove.colors.white;
+        } else if (pickup < i && (i < pickup + dateRange || i <= dropoff)) {
+          ret.style.backgroundColor = LightThemeMove.colors.primary;
+          ret.style.color = LightThemeMove.colors.white;
+          ret.children = '';
+        }
+      });
+    }
+
+    // Process hovered
+    if (hovered !== null) {
+      if (hovered === i) {
+        ret.style.backgroundColor = LightThemeMove.colors.primary;
+        ret.style.color = LightThemeMove.colors.white;
+      } else if (hovered < i && i < hovered + dateRange) {
+        ret.style.backgroundColor = LightThemeMove.colors.primary;
+        ret.style.color = LightThemeMove.colors.white;
+      }
+    }
+
+    return ret;
+  };
+
+  getDate = (d, i) => {
+    const dateAttributes = this.getDateAttributes(d, i);
+    return (
+      <Date
+        $date={d.date}
+        $disabled={dateAttributes.disabled}
+        $style={dateAttributes.style}
+        disabled={dateAttributes.disabled}
+        key={i}
+        onBlur={this.onHover(null)}
+        onClick={this.onClickDate(i)}
+        onFocus={this.onHover(i)}
+        onMouseOut={this.onHover(null)}
+        onMouseOver={this.onHover(i)}
+      >
+        {dateAttributes.children}
+      </Date>
+    );
+  };
+
+  onClickDate = (i) => () => {
     const {selected} = this.state;
-    if (selected[selected.length - 1] !== i) {
-      this.setState({selected: [...selected, i]});
+    if (!selected.length) {
+      this.setState({selected: [{pickup: i}]});
     } else {
-      currentTarget.blur();
-      this.setState({selected: selected.slice(0, selected.length - 1)});
+      const lastSelected = selected[selected.length - 1];
+      if (lastSelected.dropoff) {
+        this.setState({selected: [...selected, {pickup: i}]});
+      } else if (lastSelected.pickup + this.getDateRange() <= i) {
+        this.setState({
+          selected: [
+            ...selected.slice(0, selected.length - 1),
+            {pickup: lastSelected.pickup, dropoff: i},
+          ],
+        });
+      }
     }
   };
 
@@ -153,7 +239,7 @@ class Calendar extends React.PureComponent {
   };
 
   render() {
-    const {dates, hovered, selected} = this.state;
+    const {dates, selected} = this.state;
     return (
       <Section>
         <Block
@@ -194,24 +280,7 @@ class Calendar extends React.PureComponent {
           {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, i) => (
             <Day key={i}>{day}</Day>
           ))}
-          {dates.map((d, i) => (
-            <Date
-              $date={d.date}
-              $disabled={!d.price}
-              $hovered={hovered === i}
-              $quintile={d.quintile}
-              $selected={selected.indexOf(i) > -1}
-              disabled={!d.price}
-              key={i}
-              onBlur={this.onHover(null)}
-              onClick={this.onClickDate(i)}
-              onFocus={this.onHover(i)}
-              onMouseOut={this.onHover(null)}
-              onMouseOver={this.onHover(i)}
-            >
-              {d.price && `$${Math.floor(d.price / 1000)},${d.price % 1000}`}
-            </Date>
-          ))}
+          {dates.map(this.getDate)}
         </Grid>
       </Section>
     );
