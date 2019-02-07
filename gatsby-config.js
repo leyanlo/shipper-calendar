@@ -4,7 +4,7 @@ module.exports = {
       resolve: `gatsby-plugin-manifest`,
       options: {
         name: `Shipper Calendar`,
-        short_name: `Calendar`,
+        short_name: `Shipper Calendar`,
         start_url: `/`,
         background_color: `#FFFFFF`,
         theme_color: `#276EF1`,
