@@ -11,11 +11,10 @@ import React from 'react';
 const Main = styled('main', {
   fontFamily: 'UberMove-Regular',
   width: '100%',
-  minHeight: '100vh',
+  minHeight: 'calc(100vh - 113px)', // 113px for iPhone X toolbars
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  backgroundColor: '#FAFAFA',
 });
 
 const Section = styled('section', ({$theme}) => ({

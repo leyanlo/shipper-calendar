@@ -6,7 +6,7 @@ module.exports = {
         name: `Shipper Calendar`,
         short_name: `Shipper Calendar`,
         start_url: `/`,
-        background_color: `#FFFFFF`,
+        background_color: `#FAFAFA`,
         theme_color: `#276EF1`,
         display: `minimal-ui`,
         icon: `src/images/logo.png`,

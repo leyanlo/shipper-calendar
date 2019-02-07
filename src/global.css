@@ -56,3 +56,7 @@
   src: url('fonts/UberMoveText-Bold.woff2') format('woff2'),
     url('fonts/UberMoveText-Bold.woff') format('woff');
 }
+
+body {
+  background-color: #fafafa;
+}
