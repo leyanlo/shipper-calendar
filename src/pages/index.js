@@ -5,7 +5,6 @@ import {
   StyledBaseButton,
   StyledStartEnhancer,
 } from 'baseui/button';
-import {H6} from 'baseui/typography';
 import {LightThemeMove, ThemeProvider, styled} from 'baseui';
 import React from 'react';
 
@@ -34,6 +33,14 @@ const Section = styled('section', ({$theme}) => ({
   [$theme.media.tablet]: {
     paddingRight: $theme.sizing.scale1200,
     paddingLeft: $theme.sizing.scale1200,
+  },
+}));
+
+const Title = styled('div', ({$theme}) => ({
+  ...$theme.typography.font350,
+  [$theme.media.tablet]: {
+    ...$theme.typography.font500,
+    color: $theme.colors.mono800,
   },
 }));
 
@@ -299,9 +306,7 @@ class Calendar extends React.PureComponent {
           alignItems="center"
           justifyContent="space-between"
         >
-          <H6 $as="span" color={LightThemeMove.colors.mono800}>
-            Select shipment dates
-          </H6>
+          <Title>Select shipment dates</Title>
           <Button
             disabled={!selected}
             kind={KIND.minimal}
