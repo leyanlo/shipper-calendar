@@ -27,10 +27,14 @@ const Section = styled('section', ({$theme}) => ({
   justifyContent: 'center',
   backgroundColor: $theme.colors.white,
   paddingTop: $theme.sizing.scale900,
-  paddingRight: $theme.sizing.scale1200,
+  paddingRight: $theme.sizing.scale800,
   paddingBottom: $theme.sizing.scale900,
-  paddingLeft: $theme.sizing.scale1200,
+  paddingLeft: $theme.sizing.scale800,
   boxShadow: $theme.lighting.shadow700,
+  [$theme.media.tablet]: {
+    paddingRight: $theme.sizing.scale1200,
+    paddingLeft: $theme.sizing.scale1200,
+  },
 }));
 
 const ResetButton = styled(StyledBaseButton, ({$theme, disabled}) => ({
@@ -59,7 +63,7 @@ const Day = styled('div', ({$theme}) => ({
 }));
 
 const Date = styled('button', ({$date, $disabled, $style, $theme}) => ({
-  ...$theme.typography.font450,
+  ...$theme.typography.font200,
   fontVariantNumeric: 'tabular-nums',
   color: $theme.colors.mono800,
   position: 'relative',
@@ -67,7 +71,7 @@ const Date = styled('button', ({$date, $disabled, $style, $theme}) => ({
   height: '100%',
   padding: 0,
   display: 'flex',
-  alignItems: 'center',
+  alignItems: 'flex-end',
   justifyContent: 'center',
   border: `1px solid ${$theme.colors.mono300}`,
   ...($disabled
@@ -77,6 +81,10 @@ const Date = styled('button', ({$date, $disabled, $style, $theme}) => ({
         ...$style,
       }),
   ':focus': {outline: 'none'},
+  [$theme.media.tablet]: {
+    ...$theme.typography.font450,
+    alignItems: 'center',
+  },
   '::before': {
     content: '""',
     display: 'inline-block',
@@ -85,12 +93,15 @@ const Date = styled('button', ({$date, $disabled, $style, $theme}) => ({
     paddingBottom: '100%',
   },
   '::after': {
-    ...$theme.typography.font300,
+    ...$theme.typography.font350,
     content: `"${$date.content}"`,
     ...($date.color ? {color: $date.color} : {}),
     position: 'absolute',
     top: '7px',
     right: '7px',
+    [$theme.media.tablet]: {
+      ...$theme.typography.font300,
+    },
   },
 }));
 
