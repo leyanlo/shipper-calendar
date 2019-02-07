@@ -109,7 +109,7 @@ const Date = styled('button', ({$date, $disabled, $price, $style, $theme}) => ({
         '::before': {
           content: `"${$price}"`,
           position: 'absolute',
-          bottom: '7px',
+          bottom: $theme.sizing.scale200,
           [$theme.media.tablet]: {
             bottom: 'auto',
           },
@@ -121,10 +121,10 @@ const Date = styled('button', ({$date, $disabled, $price, $style, $theme}) => ({
     content: `"${$date.content}"`,
     ...($date.color ? {color: $date.color} : {}),
     position: 'absolute',
-    top: '7px',
+    top: $theme.sizing.scale200,
     [$theme.media.tablet]: {
       ...$theme.typography.font300,
-      right: '7px',
+      right: $theme.sizing.scale200,
     },
   },
 }));
