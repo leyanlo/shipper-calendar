@@ -156,7 +156,7 @@ class Calendar extends React.PureComponent {
     ],
     dateRange: 2,
     hovered: null,
-    selected: [],
+    selected: null,
   };
 
   getDateAttributes = (d, i) => {
@@ -191,35 +191,33 @@ class Calendar extends React.PureComponent {
     }
 
     // Process selected
-    if (selected.length) {
-      if (i < selected[0].pickup) {
+    if (selected) {
+      const {pickup, dropoff} = selected;
+      if (i < pickup) {
         ret.price = '';
         ret.style.backgroundColor = LightThemeMove.colors.white;
         ret.disabled = true;
-      }
-      selected.forEach(({pickup, dropoff}) => {
-        if (pickup === i) {
-          ret.style.backgroundColor = LightThemeMove.colors.primary;
-          ret.style.color = LightThemeMove.colors.white;
-        } else if (pickup < i && (i < pickup + dateRange || i <= dropoff)) {
-          ret.style.backgroundColor = LightThemeMove.colors.primary;
-          ret.style.color = LightThemeMove.colors.white;
-          ret.price = '';
-        }
-      });
-      const lastSelected = selected[selected.length - 1];
-      if (!lastSelected.dropoff && i > lastSelected.pickup + dateRange - 1) {
-        ret.price = `+$${150 * (i - lastSelected.pickup - dateRange + 1)}`;
+      } else if (i === pickup) {
+        ret.style.backgroundColor = LightThemeMove.colors.primary;
+        ret.style.color = LightThemeMove.colors.white;
+      } else if (i < pickup + dateRange || i <= dropoff) {
+        ret.style.backgroundColor = LightThemeMove.colors.primary200;
+        ret.style.color = LightThemeMove.colors.white;
+        ret.price = '';
+      } else if (!selected.dropoff && i > selected.pickup + dateRange - 1) {
+        ret.price = `+$${150 * (i - selected.pickup - dateRange + 1)}`;
         ret.style.color = LightThemeMove.colors.negative;
         ret.date.color = LightThemeMove.colors.mono800;
         ret.style.backgroundColor = LightThemeMove.colors.white;
-      } else if (lastSelected.dropoff) {
+      }
+
+      if (selected.dropoff) {
         ret.disabled = true;
-        if (i === lastSelected.pickup) {
+        if (i === selected.pickup) {
           const newPrice =
-            d.price + 150 * (1 + lastSelected.dropoff - i - dateRange);
+            d.price + 150 * (1 + selected.dropoff - i - dateRange);
           ret.price = `$${newPrice}`;
-        } else if (i > lastSelected.dropoff) {
+        } else if (i > selected.dropoff) {
           ret.style.backgroundColor = LightThemeMove.colors.white;
           ret.price = '';
         }
@@ -228,7 +226,7 @@ class Calendar extends React.PureComponent {
 
     // Process hovered
     if (hovered !== null) {
-      if (!selected.length) {
+      if (!selected) {
         if (hovered === i) {
           ret.style.backgroundColor = LightThemeMove.colors.primary;
           ret.style.color = LightThemeMove.colors.white;
@@ -237,18 +235,16 @@ class Calendar extends React.PureComponent {
           ret.style.color = LightThemeMove.colors.white;
           ret.price = '';
         }
-      } else {
-        const lastSelected = selected[selected.length - 1];
-        if (!lastSelected.dropoff) {
-          if (i === lastSelected.pickup && i + dateRange <= hovered) {
-            const newPrice = d.price + 150 * (1 + hovered - i - dateRange);
-            ret.price = `$${newPrice}`;
-          } else if (i > lastSelected.pickup && i <= hovered) {
-            ret.style.backgroundColor = LightThemeMove.colors.primary;
-            ret.style.color = LightThemeMove.colors.white;
-            ret.date.color = LightThemeMove.colors.white;
-            ret.price = '';
-          }
+      } else if (!selected.dropoff) {
+        if (i === selected.pickup && hovered >= selected.pickup + dateRange) {
+          const newPrice =
+            d.price + 150 * (1 + hovered - dateRange - selected.pickup);
+          ret.price = `$${newPrice}`;
+        } else if (i > selected.pickup && i <= hovered) {
+          ret.style.backgroundColor = LightThemeMove.colors.primary;
+          ret.style.color = LightThemeMove.colors.white;
+          ret.date.color = LightThemeMove.colors.white;
+          ret.price = '';
         }
       }
     }
@@ -279,25 +275,15 @@ class Calendar extends React.PureComponent {
 
   onClickDate = (i) => () => {
     const {dateRange, selected} = this.state;
-    if (!selected.length) {
-      this.setState({selected: [{pickup: i}]});
-    } else {
-      const lastSelected = selected[selected.length - 1];
-      if (lastSelected.dropoff) {
-        this.setState({selected: [...selected, {pickup: i}]});
-      } else if (lastSelected.pickup + dateRange <= i) {
-        this.setState({
-          selected: [
-            ...selected.slice(0, selected.length - 1),
-            {pickup: lastSelected.pickup, dropoff: i},
-          ],
-        });
-      }
+    if (!selected) {
+      this.setState({selected: {pickup: i}});
+    } else if (i >= selected.pickup + dateRange - 1) {
+      this.setState({selected: {...selected, dropoff: i}});
     }
   };
 
   onClickReset = () => {
-    this.setState({hovered: null, selected: []});
+    this.setState({hovered: null, selected: null});
   };
 
   onHover = (i) => () => {
@@ -317,7 +303,7 @@ class Calendar extends React.PureComponent {
             Select shipment dates
           </H6>
           <Button
-            disabled={!selected.length}
+            disabled={!selected}
             kind={KIND.minimal}
             onClick={this.onClickReset}
             startEnhancer={
@@ -349,7 +335,7 @@ class Calendar extends React.PureComponent {
           {dates.map(this.getDate)}
         </Grid>
         <Button
-          disabled={!selected[0] || !selected[0].dropoff}
+          disabled={!selected || !selected.dropoff}
           overrides={{
             BaseButton: ResetButton,
           }}
