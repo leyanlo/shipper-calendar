@@ -89,7 +89,6 @@ export const AspectRatioBox = styled('div', () => ({
 
 const Date = styled('button', ({$date, $disabled, $price, $style, $theme}) => ({
   ...$theme.typography.font200,
-  fontVariantNumeric: 'tabular-nums',
   color: $theme.colors.mono800,
   position: 'absolute',
   width: '100%',
@@ -108,6 +107,7 @@ const Date = styled('button', ({$date, $disabled, $price, $style, $theme}) => ({
   ':focus': {outline: 'none'},
   [$theme.media.tablet]: {
     ...$theme.typography.font450,
+    fontVariantNumeric: 'tabular-nums',
     alignItems: 'center',
   },
   ...($price
@@ -165,10 +165,25 @@ class Calendar extends React.PureComponent {
     selected: null,
   };
 
-  getDateAttributes = (d, i) => {
+  getDollarString = (dollars, prefix) =>
+    (dollars &&
+      [
+        prefix || '',
+        '$',
+        ...dollars
+          .toString()
+          .split('')
+          .map((char, i, splitted) =>
+            i && (splitted.length - i) % 3 === 0 ? `,${char}` : char
+          ),
+      ].join('')) ||
+    '';
+
+  getPricingDateAttributes = (d, i) => {
     const {dateRange, hovered, selected} = this.state;
 
     const ret = {
+      price: this.getDollarString(d.price),
       date: {content: d.date},
       style: {},
     };
@@ -178,10 +193,62 @@ class Calendar extends React.PureComponent {
       ret.disabled = true;
       ret.style.color = LightThemeMove.colors.mono600;
       ret.style.backgroundColor = LightThemeMove.colors.mono200;
-      return ret;
     }
 
-    ret.price = `$${d.price}`;
+    // Process quintile
+    switch (d.quintile) {
+      case 1:
+        ret.style.backgroundColor = LightThemeMove.colors.primary200;
+        break;
+      case 2:
+        ret.style.backgroundColor = LightThemeMove.colors.primary50;
+        break;
+      default:
+    }
+
+    // Process hovered
+    if (hovered !== null) {
+      if (!selected) {
+        if (hovered === i) {
+          ret.style.backgroundColor = LightThemeMove.colors.primary;
+          ret.style.color = LightThemeMove.colors.white;
+        } else if (hovered < i && i < hovered + dateRange) {
+          ret.style.backgroundColor = LightThemeMove.colors.primary;
+          ret.style.color = LightThemeMove.colors.white;
+          ret.price = '';
+        }
+      } else if (!selected.dropoff) {
+        if (i === selected.pickup && hovered >= selected.pickup + dateRange) {
+          const newPrice =
+            d.price + 150 * (1 + hovered - dateRange - selected.pickup);
+          ret.price = this.getDollarString(newPrice);
+        } else if (i > selected.pickup && i <= hovered) {
+          ret.style.backgroundColor = LightThemeMove.colors.primary;
+          ret.style.color = LightThemeMove.colors.white;
+          ret.date.color = LightThemeMove.colors.white;
+          ret.price = '';
+        }
+      }
+    }
+
+    return ret;
+  };
+
+  getDropoffDateAttributes = (d, i) => {
+    const {dateRange, hovered, selected} = this.state;
+
+    const ret = {
+      price: this.getDollarString(d.price),
+      date: {content: d.date},
+      style: {},
+    };
+
+    // Process price
+    if (!d.price) {
+      ret.disabled = true;
+      ret.style.color = LightThemeMove.colors.mono600;
+      ret.style.backgroundColor = LightThemeMove.colors.mono200;
+    }
 
     // Process quintile
     switch (d.quintile) {
@@ -192,12 +259,10 @@ class Calendar extends React.PureComponent {
         ret.style.backgroundColor = LightThemeMove.colors.primary200;
         break;
       default:
-        ret.style.backgroundColor = LightThemeMove.colors.white;
-        break;
     }
 
     // Process selected
-    if (selected) {
+    if (d.price) {
       const {pickup, dropoff} = selected;
       if (i < pickup) {
         ret.price = '';
@@ -211,7 +276,8 @@ class Calendar extends React.PureComponent {
         ret.style.color = LightThemeMove.colors.white;
         ret.price = '';
       } else if (!selected.dropoff && i > selected.pickup + dateRange - 1) {
-        ret.price = `+$${150 * (i - selected.pickup - dateRange + 1)}`;
+        const priceDifference = 150 * (i - selected.pickup - dateRange + 1);
+        ret.price = this.getDollarString(priceDifference, '+');
         ret.style.color = LightThemeMove.colors.negative;
         ret.date.color = LightThemeMove.colors.mono800;
         ret.style.backgroundColor = LightThemeMove.colors.white;
@@ -222,7 +288,7 @@ class Calendar extends React.PureComponent {
         if (i === selected.pickup) {
           const newPrice =
             d.price + 150 * (1 + selected.dropoff - i - dateRange);
-          ret.price = `$${newPrice}`;
+          ret.price = this.getDollarString(newPrice);
         } else if (i > selected.dropoff) {
           ret.style.backgroundColor = LightThemeMove.colors.white;
           ret.price = '';
@@ -245,7 +311,7 @@ class Calendar extends React.PureComponent {
         if (i === selected.pickup && hovered >= selected.pickup + dateRange) {
           const newPrice =
             d.price + 150 * (1 + hovered - dateRange - selected.pickup);
-          ret.price = `$${newPrice}`;
+          ret.price = this.getDollarString(newPrice);
         } else if (i > selected.pickup && i <= hovered) {
           ret.style.backgroundColor = LightThemeMove.colors.primary;
           ret.style.color = LightThemeMove.colors.white;
@@ -259,7 +325,10 @@ class Calendar extends React.PureComponent {
   };
 
   getDate = (d, i) => {
-    const dateAttributes = this.getDateAttributes(d, i);
+    const {selected} = this.state;
+    const dateAttributes = selected
+      ? this.getDropoffDateAttributes(d, i)
+      : this.getPricingDateAttributes(d, i);
     return (
       <AspectRatioBox>
         <Date
