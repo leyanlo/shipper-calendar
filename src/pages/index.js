@@ -87,17 +87,18 @@ export const AspectRatioBox = styled('div', () => ({
   },
 }));
 
-const Date = styled('button', ({$date, $disabled, $price, $style, $theme}) => ({
-  ...$theme.typography.font200,
+const DateButton = styled('button', ({$disabled, $style, $theme}) => ({
   color: $theme.colors.mono800,
+  backgroundColor: $theme.colors.white,
   position: 'absolute',
   width: '100%',
   height: '100%',
   padding: 0,
   display: 'flex',
-  alignItems: 'flex-end',
+  flexDirection: 'column',
+  alignItems: 'center',
   justifyContent: 'center',
-  border: `1px solid ${$theme.colors.mono300}`,
+  border: 'none',
   ...($disabled
     ? {}
     : {
@@ -105,40 +106,30 @@ const Date = styled('button', ({$date, $disabled, $price, $style, $theme}) => ({
         ...$style,
       }),
   ':focus': {outline: 'none'},
+}));
+
+const Date = styled('span', ({$style, $theme}) => ({
+  ...$theme.typography.font350,
+  [$theme.media.tablet]: {
+    ...$theme.typography.font500,
+  },
+  ...$style,
+}));
+
+const Price = styled('span', ({$theme}) => ({
+  ...$theme.typography.font200,
+  minHeight: $theme.typography.font200.lineHeight,
   [$theme.media.tablet]: {
     ...$theme.typography.font450,
+    minHeight: $theme.typography.font450.lineHeight,
     fontVariantNumeric: 'tabular-nums',
-    alignItems: 'center',
-  },
-  ...($price
-    ? {
-        '::before': {
-          content: `"${$price}"`,
-          position: 'absolute',
-          bottom: $theme.sizing.scale200,
-          [$theme.media.tablet]: {
-            bottom: 'auto',
-          },
-        },
-      }
-    : {}),
-  '::after': {
-    ...$theme.typography.font350,
-    content: `"${$date.content}"`,
-    ...($date.color ? {color: $date.color} : {}),
-    position: 'absolute',
-    top: $theme.sizing.scale200,
-    [$theme.media.tablet]: {
-      ...$theme.typography.font300,
-      right: $theme.sizing.scale200,
-    },
   },
 }));
 
 class Calendar extends React.PureComponent {
   state = {
     dates: [
-      {date: 'Jan 6'},
+      {date: '1/6'},
       {date: '7'},
       {date: '8', price: 1739, quintile: 1},
       {date: '9', price: 1771},
@@ -225,7 +216,7 @@ class Calendar extends React.PureComponent {
         } else if (i > selected.pickup && i <= hovered) {
           ret.style.backgroundColor = LightThemeMove.colors.primary;
           ret.style.color = LightThemeMove.colors.white;
-          ret.date.color = LightThemeMove.colors.white;
+          ret.date.style = {color: LightThemeMove.colors.white};
           ret.price = '';
         }
       }
@@ -279,7 +270,7 @@ class Calendar extends React.PureComponent {
         const priceDifference = 150 * (i - selected.pickup - dateRange + 1);
         ret.price = this.getDollarString(priceDifference, '+');
         ret.style.color = LightThemeMove.colors.negative;
-        ret.date.color = LightThemeMove.colors.mono800;
+        ret.date.style = {color: LightThemeMove.colors.mono800};
         ret.style.backgroundColor = LightThemeMove.colors.white;
       }
 
@@ -315,7 +306,7 @@ class Calendar extends React.PureComponent {
         } else if (i > selected.pickup && i <= hovered) {
           ret.style.backgroundColor = LightThemeMove.colors.primary;
           ret.style.color = LightThemeMove.colors.white;
-          ret.date.color = LightThemeMove.colors.white;
+          ret.date.style = {color: LightThemeMove.colors.white};
           ret.price = '';
         }
       }
@@ -331,10 +322,8 @@ class Calendar extends React.PureComponent {
       : this.getPricingDateAttributes(d, i);
     return (
       <AspectRatioBox>
-        <Date
-          $date={dateAttributes.date}
+        <DateButton
           $disabled={dateAttributes.disabled}
-          $price={dateAttributes.price}
           $style={dateAttributes.style}
           disabled={dateAttributes.disabled}
           key={i}
@@ -343,7 +332,12 @@ class Calendar extends React.PureComponent {
           onFocus={this.onHover(i)}
           onMouseOut={this.onHover(null)}
           onMouseOver={this.onHover(i)}
-        />
+        >
+          <Date $style={dateAttributes.date.style}>
+            {dateAttributes.date.content}
+          </Date>
+          <Price>{dateAttributes.price}</Price>
+        </DateButton>
       </AspectRatioBox>
     );
   };
