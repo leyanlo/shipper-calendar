@@ -108,7 +108,7 @@ const DateButton = styled('button', ({$disabled, $style, $theme}) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  justifyContent: 'center',
+  justifyContent: 'flex-start',
   borderWidth: 0,
   ...($disabled
     ? {}
@@ -120,10 +120,11 @@ const DateButton = styled('button', ({$disabled, $style, $theme}) => ({
     outline: 'none',
   },
   '::before': {
-    position: 'absolute',
-    top: $theme.sizing.scale400,
+    content: '""',
+    marginTop: $theme.sizing.scale400,
     color: $theme.colors.white,
     ...$theme.typography.font350,
+    minHeight: $theme.typography.font350.lineHeight,
     display: 'none',
     [$theme.media.small]: {
       display: 'block',
@@ -134,6 +135,7 @@ const DateButton = styled('button', ({$disabled, $style, $theme}) => ({
 const DateSpan = styled('span', ({$style, $theme}) => ({
   pointerEvents: 'none',
   ...$theme.typography.font350,
+  marginBottom: $theme.sizing.scale0,
   [$theme.media.small]: {
     ...$theme.typography.font500,
   },
