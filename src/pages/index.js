@@ -372,6 +372,14 @@ class Calendar extends React.PureComponent {
         ret.style.borderBottomRightRadius = FreightTheme.sizing.scale300;
         ret.date.style.color = FreightTheme.colors.white;
         ret.style['::before'] = {content: '"Dropoff"'};
+      } else if (i > hovered && i < pickup + dateRange + 3) {
+        const priceDifference = 150 * (i - pickup - dateRange + 1);
+        ret.price = this.getDollarString(priceDifference, '+');
+        ret.date.style.color = FreightTheme.colors.black;
+        ret.style.backgroundColor = FreightTheme.colors.white;
+        ret.style.borderWidth = 0;
+        ret.style.color = FreightTheme.colors.negative;
+        ret.style['::before'] = {content: '""'};
       }
     }
 
@@ -407,9 +415,12 @@ class Calendar extends React.PureComponent {
   onClickDate = (i) => () => {
     const {dateRange, selected} = this.state;
     if (!selected) {
-      this.setState({selected: {pickup: i, dropoff: i + dateRange - 1}});
-    } else if (i >= selected.pickup + dateRange - 1) {
-      this.setState({selected: {...selected, dropoff: i}});
+      this.setState({
+        hovered: null,
+        selected: {pickup: i, dropoff: i + dateRange - 1},
+      });
+    } else {
+      this.setState({hovered: null, selected: {...selected, dropoff: i}});
     }
   };
 
@@ -481,12 +492,13 @@ class Calendar extends React.PureComponent {
                 </B>{' '}
                 and dropped off{' '}
                 <B>
-                  {dates[
-                    (hovered > selected.pickup && hovered) || selected.dropoff
-                  ].date.toLocaleDateString('en-US', {
-                    month: 'long',
-                    day: 'numeric',
-                  })}
+                  {dates[hovered || selected.dropoff].date.toLocaleDateString(
+                    'en-US',
+                    {
+                      month: 'long',
+                      day: 'numeric',
+                    }
+                  )}
                 </B>
               </>
             ) : (
