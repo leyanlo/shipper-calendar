@@ -7,6 +7,7 @@ import {
 } from 'baseui/button';
 import {LightThemeMove, ThemeProvider, styled} from 'baseui';
 import React from 'react';
+import extend from 'just-extend';
 
 const Main = styled('main', {
   fontFamily: 'UberMove-Regular',
@@ -36,12 +37,9 @@ const Section = styled('section', ({$theme}) => ({
 }));
 
 const Title = styled('div', ({$theme}) => ({
-  fontFamily: 'UberMove-Medium',
-  fontSize: $theme.typography.font450.fontSize,
-  lineHeight: $theme.typography.font450.lineHeight,
+  ...$theme.typography.font450,
   [$theme.media.small]: {
-    fontSize: $theme.typography.font600.fontSize,
-    lineHeight: $theme.typography.font600.lineHeight,
+    ...$theme.typography.font600.fontSize,
   },
 }));
 
@@ -371,7 +369,7 @@ class Calendar extends React.PureComponent {
   onClickDate = (i) => () => {
     const {dateRange, selected} = this.state;
     if (!selected) {
-      this.setState({selected: {pickup: i}});
+      this.setState({selected: {pickup: i, dropoff: i + dateRange - 1}});
     } else if (i >= selected.pickup + dateRange - 1) {
       this.setState({selected: {...selected, dropoff: i}});
     }
@@ -443,11 +441,20 @@ class Calendar extends React.PureComponent {
 
 export default () => (
   <ThemeProvider
-    theme={{
-      ...LightThemeMove,
+    theme={extend(true, LightThemeMove, {
       breakpoints: {small: 769},
       media: {small: '@media only screen and (min-width: 769px)'},
-    }}
+      typography: {
+        font250: {fontFamily: 'UberMoveText-Medium'},
+        font350: {fontFamily: 'UberMoveText-Medium'},
+        font450: {fontFamily: 'UberMoveText-Medium'},
+        font500: {fontFamily: 'UberMoveText-Medium'},
+        font600: {fontFamily: 'UberMoveText-Medium'},
+        font700: {fontFamily: 'UberMoveText-Medium'},
+        font800: {fontFamily: 'UberMoveText-Medium'},
+        font900: {fontFamily: 'UberMoveText-Medium'},
+      },
+    })}
   >
     <Main>
       <Calendar />
