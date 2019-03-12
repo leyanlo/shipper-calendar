@@ -195,6 +195,7 @@ class Calendar extends React.PureComponent {
       dateRange: 5,
       hovered: null,
       selected: null,
+      isReviewShipmentButtonLoading: false,
     };
   }
 
@@ -439,7 +440,18 @@ class Calendar extends React.PureComponent {
   };
 
   onClickReset = () => {
-    this.setState({hovered: null, selected: null});
+    this.setState({
+      hovered: null,
+      selected: null,
+      isReviewShipmentButtonLoading: false,
+    });
+  };
+
+  onClickReviewShipment = () => {
+    this.setState({isReviewShipmentButtonLoading: true});
+    setTimeout(() => {
+      this.setState({isReviewShipmentButtonLoading: false});
+    }, 1000);
   };
 
   onHover = (i) => () => {
@@ -447,7 +459,12 @@ class Calendar extends React.PureComponent {
   };
 
   render() {
-    const {dates, hovered, selected} = this.state;
+    const {
+      dates,
+      hovered,
+      isReviewShipmentButtonLoading,
+      selected,
+    } = this.state;
     return (
       <Card
         overrides={{
@@ -536,7 +553,7 @@ class Calendar extends React.PureComponent {
             )}
           </Paragraph2>
           <Button
-            disabled={!selected}
+            disabled={!selected || isReviewShipmentButtonLoading}
             overrides={{
               BaseButton: ReviewButton,
             }}
@@ -554,6 +571,8 @@ class Calendar extends React.PureComponent {
                 />
               </svg>
             }
+            onClick={this.onClickReviewShipment}
+            isLoading={isReviewShipmentButtonLoading}
           >
             Review Shipment
           </Button>
