@@ -79,6 +79,7 @@ export const AspectRatioBox = styled('div', () => ({
     float: 'left',
     height: 0,
     paddingTop: '100%',
+    pointerEvents: 'none',
   },
   '::after': {
     content: '""',
@@ -98,17 +99,26 @@ const DateButton = styled('button', ({$disabled, $style, $theme}) => ({
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
-  border: 'none',
+  borderWidth: 0,
   ...($disabled
     ? {}
     : {
         cursor: 'pointer',
         ...$style,
       }),
-  ':focus': {outline: 'none'},
+  ':focus': {
+    outline: 'none',
+  },
+  '::before': {
+    position: 'absolute',
+    top: $theme.sizing.scale400,
+    color: $theme.colors.white,
+    ...$theme.typography.font350,
+  },
 }));
 
 const DateSpan = styled('span', ({$style, $theme}) => ({
+  pointerEvents: 'none',
   ...$theme.typography.font350,
   [$theme.media.small]: {
     ...$theme.typography.font500,
@@ -186,7 +196,7 @@ class Calendar extends React.PureComponent {
     '';
 
   getPricingDateAttributes = (d, i) => {
-    const {dateRange, hovered, selected} = this.state;
+    const {dateRange, hovered} = this.state;
 
     const ret = {
       price: this.getDollarString(d.price),
@@ -195,6 +205,7 @@ class Calendar extends React.PureComponent {
           ...(!i || d.date.getDate() === 1 ? {month: 'short'} : {}),
           day: 'numeric',
         }),
+        style: {color: LightThemeMove.colors.black},
       },
       style: {},
     };
@@ -203,40 +214,43 @@ class Calendar extends React.PureComponent {
     if (!d.price) {
       ret.disabled = true;
       ret.style.color = LightThemeMove.colors.mono600;
+      ret.date.style.color = LightThemeMove.colors.mono600;
     }
 
     // Process quintile
     switch (d.quintile) {
       case 1:
-        ret.style.backgroundColor = LightThemeMove.colors.primary200;
-        break;
       case 2:
-        ret.style.backgroundColor = LightThemeMove.colors.primary50;
+        ret.style.color = LightThemeMove.colors.positive;
         break;
       default:
+        ret.style.color = LightThemeMove.colors.black;
     }
 
     // Process hovered
     if (hovered !== null) {
-      if (!selected) {
-        if (hovered === i) {
-          ret.style.backgroundColor = LightThemeMove.colors.primary;
-          ret.style.color = LightThemeMove.colors.white;
-        } else if (hovered < i && i < hovered + dateRange) {
-          ret.style.backgroundColor = LightThemeMove.colors.primary;
-          ret.style.color = LightThemeMove.colors.white;
+      if (hovered === i) {
+        ret.style.backgroundColor = LightThemeMove.colors.primary;
+        ret.style.color = LightThemeMove.colors.white;
+        ret.style.borderTopLeftRadius = LightThemeMove.sizing.scale300;
+        ret.style.borderBottomLeftRadius = LightThemeMove.sizing.scale300;
+        ret.style['::before'] = {content: '"Pickup"'};
+        ret.date.style.color = LightThemeMove.colors.white;
+      } else if (hovered < i) {
+        if (i < hovered + dateRange - 1) {
           ret.price = '';
-        }
-      } else if (!selected.dropoff) {
-        if (i === selected.pickup && hovered >= selected.pickup + dateRange) {
-          const newPrice =
-            d.price + 150 * (1 + hovered - dateRange - selected.pickup);
-          ret.price = this.getDollarString(newPrice);
-        } else if (i > selected.pickup && i <= hovered) {
+          ret.style.backgroundColor = LightThemeMove.colors.primary50;
+          ret.style.borderWidth = `${LightThemeMove.sizing.scale0} 0`;
+          ret.style.borderColor = LightThemeMove.colors.primary;
+          ret.date.style.color = LightThemeMove.colors.mono700;
+        } else if (i === hovered + dateRange - 1) {
+          ret.price = '';
           ret.style.backgroundColor = LightThemeMove.colors.primary;
           ret.style.color = LightThemeMove.colors.white;
-          ret.date.style = {color: LightThemeMove.colors.white};
-          ret.price = '';
+          ret.style.borderTopRightRadius = LightThemeMove.sizing.scale300;
+          ret.style.borderBottomRightRadius = LightThemeMove.sizing.scale300;
+          ret.date.style.color = LightThemeMove.colors.white;
+          ret.style['::before'] = {content: '"Dropoff"'};
         }
       }
     }
