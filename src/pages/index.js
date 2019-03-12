@@ -36,10 +36,12 @@ const Section = styled('section', ({$theme}) => ({
 }));
 
 const Title = styled('div', ({$theme}) => ({
-  ...$theme.typography.font350,
+  fontFamily: 'UberMove-Medium',
+  fontSize: $theme.typography.font450.fontSize,
+  lineHeight: $theme.typography.font450.lineHeight,
   [$theme.media.tablet]: {
-    ...$theme.typography.font500,
-    color: $theme.colors.mono800,
+    fontSize: $theme.typography.font600.fontSize,
+    lineHeight: $theme.typography.font600.lineHeight,
   },
 }));
 
