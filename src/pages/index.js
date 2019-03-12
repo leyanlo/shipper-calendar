@@ -59,7 +59,7 @@ const Grid = styled('div', ({$theme}) => ({
   gridTemplateRows: $theme.sizing.scale900,
   alignItems: 'center',
   justifyItems: 'center',
-  background: $theme.colors.white,
+  backgroundColor: $theme.colors.white,
   marginBottom: $theme.sizing.scale800,
 }));
 
@@ -203,7 +203,6 @@ class Calendar extends React.PureComponent {
     if (!d.price) {
       ret.disabled = true;
       ret.style.color = LightThemeMove.colors.mono600;
-      ret.style.backgroundColor = LightThemeMove.colors.mono200;
     }
 
     // Process quintile
