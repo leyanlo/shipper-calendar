@@ -25,14 +25,15 @@ const FreightTheme = extend(true, LightThemeMove, {
   },
 });
 
-const Main = styled('main', {
-  fontFamily: 'UberMove-Regular',
-  width: '100%',
+const Main = styled('main', ({$theme}) => ({
   minHeight: 'calc(100vh - 113px)', // 113px for iPhone X toolbars
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-});
+  [$theme.media.small]: {
+    minHeight: '100vh',
+  },
+}));
 
 const Section = styled('section', ({$theme}) => ({
   display: 'flex',
