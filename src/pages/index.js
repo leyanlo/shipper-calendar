@@ -29,7 +29,7 @@ const Section = styled('section', ({$theme}) => ({
   paddingBottom: $theme.sizing.scale900,
   paddingLeft: $theme.sizing.scale800,
   boxShadow: $theme.lighting.shadow700,
-  [$theme.media.tablet]: {
+  [$theme.media.small]: {
     paddingRight: $theme.sizing.scale1200,
     paddingLeft: $theme.sizing.scale1200,
   },
@@ -39,7 +39,7 @@ const Title = styled('div', ({$theme}) => ({
   fontFamily: 'UberMove-Medium',
   fontSize: $theme.typography.font450.fontSize,
   lineHeight: $theme.typography.font450.lineHeight,
-  [$theme.media.tablet]: {
+  [$theme.media.small]: {
     fontSize: $theme.typography.font600.fontSize,
     lineHeight: $theme.typography.font600.lineHeight,
   },
@@ -112,7 +112,7 @@ const DateButton = styled('button', ({$disabled, $style, $theme}) => ({
 
 const DateSpan = styled('span', ({$style, $theme}) => ({
   ...$theme.typography.font350,
-  [$theme.media.tablet]: {
+  [$theme.media.small]: {
     ...$theme.typography.font500,
   },
   ...$style,
@@ -121,7 +121,7 @@ const DateSpan = styled('span', ({$style, $theme}) => ({
 const Price = styled('span', ({$theme}) => ({
   ...$theme.typography.font200,
   minHeight: $theme.typography.font200.lineHeight,
-  [$theme.media.tablet]: {
+  [$theme.media.small]: {
     ...$theme.typography.font450,
     minHeight: $theme.typography.font450.lineHeight,
     fontVariantNumeric: 'tabular-nums',
@@ -445,9 +445,8 @@ export default () => (
   <ThemeProvider
     theme={{
       ...LightThemeMove,
-      media: {
-        tablet: '@media only screen and (min-width: 769px)',
-      },
+      breakpoints: {small: 769},
+      media: {small: '@media only screen and (min-width: 769px)'},
     }}
   >
     <Main>
