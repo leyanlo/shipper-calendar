@@ -58,7 +58,7 @@ const ResetButtonIcon = styled(StyledStartEnhancer, ({$theme}) => ({
 const Grid = styled('div', ({$theme}) => ({
   display: 'grid',
   gridTemplateColumns: 'repeat(7, 1fr)',
-  gridTemplateRows: $theme.sizing.scale1200,
+  gridTemplateRows: $theme.sizing.scale900,
   alignItems: 'center',
   justifyItems: 'center',
   background: $theme.colors.white,
@@ -66,7 +66,7 @@ const Grid = styled('div', ({$theme}) => ({
 }));
 
 const Day = styled('div', ({$theme}) => ({
-  ...$theme.typography.font300,
+  ...$theme.typography.font350,
   color: $theme.colors.mono600,
 }));
 
@@ -393,6 +393,7 @@ class Calendar extends React.PureComponent {
           display="flex"
           alignItems="center"
           justifyContent="space-between"
+          marginBottom="scale600"
         >
           <Title>Select shipment dates</Title>
           <Button
