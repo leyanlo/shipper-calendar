@@ -482,7 +482,7 @@ class Calendar extends React.PureComponent {
           alignItems="center"
           justifyContent="space-between"
         >
-          <Paragraph2>
+          <Paragraph2 $as="span">
             {selected ? (
               <>
                 Shipment will be picked up{' '}
