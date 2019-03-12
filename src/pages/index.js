@@ -110,6 +110,10 @@ const DateButton = styled('button', ({$disabled, $style, $theme}) => ({
   alignItems: 'center',
   justifyContent: 'flex-start',
   borderWidth: 0,
+  borderTopLeftRadius: $theme.sizing.scale300,
+  borderTopRightRadius: $theme.sizing.scale300,
+  borderBottomRightRadius: $theme.sizing.scale300,
+  borderBottomLeftRadius: $theme.sizing.scale300,
   ...($disabled
     ? {}
     : {
@@ -260,8 +264,8 @@ class Calendar extends React.PureComponent {
       if (hovered === i) {
         ret.style.backgroundColor = FreightTheme.colors.primary;
         ret.style.color = FreightTheme.colors.white;
-        ret.style.borderTopLeftRadius = FreightTheme.sizing.scale300;
-        ret.style.borderBottomLeftRadius = FreightTheme.sizing.scale300;
+        ret.style.borderTopRightRadius = 0;
+        ret.style.borderBottomRightRadius = 0;
         ret.style['::before'] = {content: '"Pickup"'};
         ret.date.style.color = FreightTheme.colors.white;
         ret.price.style.fontSize = FreightTheme.typography.font300.fontSize;
@@ -274,13 +278,17 @@ class Calendar extends React.PureComponent {
           ret.style.backgroundColor = FreightTheme.colors.primary50;
           ret.style.borderWidth = `${FreightTheme.sizing.scale0} 0`;
           ret.style.borderColor = FreightTheme.colors.primary;
+          ret.style.borderTopLeftRadius = 0;
+          ret.style.borderTopRightRadius = 0;
+          ret.style.borderBottomRightRadius = 0;
+          ret.style.borderBottomLeftRadius = 0;
           ret.date.style.color = FreightTheme.colors.mono700;
         } else if (i === hovered + dateRange - 1) {
           ret.price.content = '';
           ret.style.backgroundColor = FreightTheme.colors.primary;
           ret.style.color = FreightTheme.colors.white;
-          ret.style.borderTopRightRadius = FreightTheme.sizing.scale300;
-          ret.style.borderBottomRightRadius = FreightTheme.sizing.scale300;
+          ret.style.borderTopLeftRadius = 0;
+          ret.style.borderBottomLeftRadius = 0;
           ret.date.style.color = FreightTheme.colors.white;
           ret.style['::before'] = {content: '"Dropoff"'};
         }
@@ -326,8 +334,8 @@ class Calendar extends React.PureComponent {
     } else if (i === pickup) {
       ret.style.backgroundColor = FreightTheme.colors.primary;
       ret.style.color = FreightTheme.colors.white;
-      ret.style.borderTopLeftRadius = FreightTheme.sizing.scale300;
-      ret.style.borderBottomLeftRadius = FreightTheme.sizing.scale300;
+      ret.style.borderTopRightRadius = 0;
+      ret.style.borderBottomRightRadius = 0;
       ret.style['::before'] = {content: '"Pickup"'};
       ret.date.style.color = FreightTheme.colors.white;
       const newPrice = d.price + 150 * (1 + dropoff - i - dateRange);
@@ -341,14 +349,18 @@ class Calendar extends React.PureComponent {
       ret.style.backgroundColor = FreightTheme.colors.primary50;
       ret.style.borderWidth = `${FreightTheme.sizing.scale0} 0`;
       ret.style.borderColor = FreightTheme.colors.primary;
+      ret.style.borderTopLeftRadius = 0;
+      ret.style.borderTopRightRadius = 0;
+      ret.style.borderBottomRightRadius = 0;
+      ret.style.borderBottomLeftRadius = 0;
       ret.style.color = FreightTheme.colors.mono700;
       ret.date.style.color = FreightTheme.colors.mono700;
     } else if (i === dropoff) {
       ret.price.content = '';
       ret.style.backgroundColor = FreightTheme.colors.primary;
       ret.style.color = FreightTheme.colors.white;
-      ret.style.borderTopRightRadius = FreightTheme.sizing.scale300;
-      ret.style.borderBottomRightRadius = FreightTheme.sizing.scale300;
+      ret.style.borderTopLeftRadius = 0;
+      ret.style.borderBottomLeftRadius = 0;
       ret.date.style.color = FreightTheme.colors.white;
       ret.style['::before'] = {content: '"Dropoff"'};
     } else if (i > pickup + dateRange - 1 && i < pickup + dateRange + 3) {
@@ -373,16 +385,18 @@ class Calendar extends React.PureComponent {
         ret.style.borderColor = FreightTheme.colors.primary;
         ret.style.color = FreightTheme.colors.mono700;
         ret.date.style.color = FreightTheme.colors.mono700;
+        ret.style.borderTopLeftRadius = 0;
         ret.style.borderTopRightRadius = 0;
         ret.style.borderBottomRightRadius = 0;
+        ret.style.borderBottomLeftRadius = 0;
         ret.style['::before'] = {content: '""'};
       } else if (i === hovered) {
         ret.price.content = '';
         ret.style.borderWidth = 0;
         ret.style.backgroundColor = FreightTheme.colors.primary;
         ret.style.color = FreightTheme.colors.white;
-        ret.style.borderTopRightRadius = FreightTheme.sizing.scale300;
-        ret.style.borderBottomRightRadius = FreightTheme.sizing.scale300;
+        ret.style.borderTopLeftRadius = 0;
+        ret.style.borderBottomLeftRadius = 0;
         ret.date.style.color = FreightTheme.colors.white;
         ret.style['::before'] = {content: '"Dropoff"'};
       } else if (i > hovered && i < pickup + dateRange + 3) {
