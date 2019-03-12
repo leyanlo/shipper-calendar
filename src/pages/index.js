@@ -6,6 +6,7 @@ import {
   StyledStartEnhancer,
 } from 'baseui/button';
 import {LightThemeMove, ThemeProvider, styled} from 'baseui';
+import {Paragraph2} from 'baseui/typography';
 import React from 'react';
 import extend from 'just-extend';
 
@@ -60,8 +61,12 @@ const Title = styled('div', ({$theme}) => ({
 
 const ResetButton = styled(StyledBaseButton, ({$theme, disabled}) => ({
   ...$theme.typography.font350,
-  alignSelf: 'flex-end',
   ...(disabled ? {opacity: 0, pointerEvents: 'none'} : {}),
+}));
+
+const ReviewButton = styled(StyledBaseButton, ({$theme}) => ({
+  ...$theme.typography.font350,
+  marginLeft: $theme.sizing.scale800,
 }));
 
 const ResetButtonIcon = styled(StyledStartEnhancer, ({$theme}) => ({
@@ -76,6 +81,7 @@ const Grid = styled('div', ({$theme}) => ({
   justifyItems: 'center',
   backgroundColor: $theme.colors.white,
   marginBottom: $theme.sizing.scale800,
+  borderBottom: `1px solid ${$theme.colors.mono400}`,
 }));
 
 const Day = styled('div', ({$theme}) => ({
@@ -129,6 +135,10 @@ const DateButton = styled('button', ({$disabled, $style, $theme}) => ({
     top: $theme.sizing.scale400,
     color: $theme.colors.white,
     ...$theme.typography.font350,
+    display: 'none',
+    [$theme.media.small]: {
+      display: 'block',
+    },
   },
 }));
 
@@ -150,6 +160,8 @@ const Price = styled('span', ({$theme}) => ({
     fontVariantNumeric: 'tabular-nums',
   },
 }));
+
+const B = styled('b', {fontFamily: 'UberMoveText-Bold'});
 
 class Calendar extends React.PureComponent {
   constructor(props) {
@@ -353,6 +365,7 @@ class Calendar extends React.PureComponent {
         ret.style['::before'] = {content: '""'};
       } else if (i === hovered) {
         ret.price = '';
+        ret.style.borderWidth = 0;
         ret.style.backgroundColor = FreightTheme.colors.primary;
         ret.style.color = FreightTheme.colors.white;
         ret.style.borderTopRightRadius = FreightTheme.sizing.scale300;
@@ -409,7 +422,7 @@ class Calendar extends React.PureComponent {
   };
 
   render() {
-    const {dates, selected} = this.state;
+    const {dates, hovered, selected} = this.state;
     return (
       <Section>
         <Block
@@ -451,14 +464,58 @@ class Calendar extends React.PureComponent {
           ))}
           {dates.map(this.getDate)}
         </Grid>
-        <Button
-          disabled={!selected || !selected.dropoff}
-          overrides={{
-            BaseButton: ResetButton,
-          }}
+        <Block
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
         >
-          Review Shipment
-        </Button>
+          <Paragraph2>
+            {selected ? (
+              <>
+                Shipment will be picked up{' '}
+                <B>
+                  {dates[selected.pickup].date.toLocaleDateString('en-US', {
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </B>{' '}
+                and dropped off{' '}
+                <B>
+                  {dates[
+                    (hovered > selected.pickup && hovered) || selected.dropoff
+                  ].date.toLocaleDateString('en-US', {
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </B>
+              </>
+            ) : (
+              ''
+            )}
+          </Paragraph2>
+          <Button
+            disabled={!selected}
+            overrides={{
+              BaseButton: ReviewButton,
+            }}
+            startEnhancer={<div />}
+            endEnhancer={
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 18 18"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M16.65 9L11.775 15.75H9.15L13.275 10.125H1.5V7.875H13.275L9.15 2.25H11.775L16.65 9Z"
+                  fill="currentColor"
+                />
+              </svg>
+            }
+          >
+            Review Shipment
+          </Button>
+        </Block>
       </Section>
     );
   }
