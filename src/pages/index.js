@@ -110,7 +110,7 @@ const DateButton = styled('button', ({$disabled, $style, $theme}) => ({
   ':focus': {outline: 'none'},
 }));
 
-const Date = styled('span', ({$style, $theme}) => ({
+const DateSpan = styled('span', ({$style, $theme}) => ({
   ...$theme.typography.font350,
   [$theme.media.tablet]: {
     ...$theme.typography.font500,
@@ -129,33 +129,48 @@ const Price = styled('span', ({$theme}) => ({
 }));
 
 class Calendar extends React.PureComponent {
-  state = {
-    dates: [
-      {date: '1/6'},
-      {date: '7'},
-      {date: '8', price: 1739, quintile: 1},
-      {date: '9', price: 1771},
-      {date: '10', price: 1729, quintile: 1},
-      {date: '11', price: 1781},
-      {date: '12', price: 1772},
-      {date: '13', price: 1779},
-      {date: '14', price: 1783},
-      {date: '15', price: 1790},
-      {date: '16', price: 1789},
-      {date: '17', price: 1747, quintile: 2},
-      {date: '18', price: 1792},
-      {date: '19', price: 1786},
-      {date: '20', price: 1792},
-      {date: '21', price: 1798},
-      {date: '22'},
-      {date: '23'},
-      {date: '24'},
-      {date: '25'},
-      {date: '26'},
-    ],
-    dateRange: 2,
-    hovered: null,
-    selected: null,
+  constructor(props) {
+    super(props);
+
+    const prices = [
+      {price: 1739, quintile: 1},
+      {price: 1771},
+      {price: 1729, quintile: 1},
+      {price: 1781},
+      {price: 1772},
+      {price: 1779},
+      {price: 1783},
+      {price: 1790},
+      {price: 1789},
+      {price: 1747, quintile: 2},
+      {price: 1792},
+      {price: 1786},
+      {price: 1792},
+      {price: 1798},
+    ];
+    const today = new Date();
+    today.setHours(12, 0, 0, 0);
+    const lastSunday = this.getLastSunday();
+    const dates = Array.from(Array(28).keys()).map((i) => {
+      const date = new Date(lastSunday);
+      date.setDate(date.getDate() + i);
+      const dateDelta = parseInt((date - today) / (24 * 3600 * 1000), 10);
+      return {date, ...prices[dateDelta]};
+    });
+
+    this.state = {
+      dates,
+      dateRange: 5,
+      hovered: null,
+      selected: null,
+    };
+  }
+
+  getLastSunday = () => {
+    const d = new Date();
+    d.setDate(d.getDate() - d.getDay());
+    d.setHours(12, 0, 0, 0);
+    return d;
   };
 
   getDollarString = (dollars, prefix) =>
@@ -177,7 +192,12 @@ class Calendar extends React.PureComponent {
 
     const ret = {
       price: this.getDollarString(d.price),
-      date: {content: d.date},
+      date: {
+        content: d.date.toLocaleDateString('en-US', {
+          ...(!i || d.date.getDate() === 1 ? {month: 'short'} : {}),
+          day: 'numeric',
+        }),
+      },
       style: {},
     };
 
@@ -232,7 +252,12 @@ class Calendar extends React.PureComponent {
 
     const ret = {
       price: this.getDollarString(d.price),
-      date: {content: d.date},
+      date: {
+        content: d.date.toLocaleDateString('en-US', {
+          ...(!i || d.date.getDate() === 1 ? {month: 'short'} : {}),
+          day: 'numeric',
+        }),
+      },
       style: {},
     };
 
@@ -334,9 +359,9 @@ class Calendar extends React.PureComponent {
           onMouseOut={this.onHover(null)}
           onMouseOver={this.onHover(i)}
         >
-          <Date $style={dateAttributes.date.style}>
+          <DateSpan $style={dateAttributes.date.style}>
             {dateAttributes.date.content}
-          </Date>
+          </DateSpan>
           <Price>{dateAttributes.price}</Price>
         </DateButton>
       </AspectRatioBox>
