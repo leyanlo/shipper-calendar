@@ -61,3 +61,12 @@ body {
   background-color: #fafafa;
   -webkit-font-smoothing: antialiased;
 }
+
+/* For some reason the main Gatsby div highlights on touch in iOS Safari */
+[tabindex='-1'] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+[tabindex='-1'] > * {
+  -webkit-tap-highlight-color: initial;
+}
