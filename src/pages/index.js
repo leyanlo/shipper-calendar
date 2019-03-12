@@ -5,6 +5,7 @@ import {
   StyledBaseButton,
   StyledStartEnhancer,
 } from 'baseui/button';
+import {Card} from 'baseui/card';
 import {LightThemeMove, ThemeProvider, styled} from 'baseui';
 import {Paragraph2} from 'baseui/typography';
 import {mergeStyleOverrides} from 'baseui/helpers/overrides';
@@ -36,28 +37,14 @@ const Main = styled('main', ({$theme}) => ({
   },
 }));
 
-const Section = styled('section', ({$theme}) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  width: '100%',
-  maxWidth: '760px',
-  justifyContent: 'center',
-  backgroundColor: $theme.colors.white,
-  paddingTop: $theme.sizing.scale900,
-  paddingRight: $theme.sizing.scale800,
-  paddingBottom: $theme.sizing.scale900,
-  paddingLeft: $theme.sizing.scale800,
-  boxShadow: $theme.lighting.shadow700,
-  [$theme.media.small]: {
-    paddingRight: $theme.sizing.scale1200,
-    paddingLeft: $theme.sizing.scale1200,
-  },
-}));
-
 const Title = styled('div', ({$theme}) => ({
-  ...$theme.typography.font450,
+  color: $theme.colors.black,
+  fontFamily: 'UberMove-Medium',
+  fontSize: $theme.typography.font450.fontSize,
+  lineHeight: $theme.typography.font450.lineHeight,
   [$theme.media.small]: {
-    ...$theme.typography.font600.fontSize,
+    fontSize: $theme.typography.font600.fontSize,
+    lineHeight: $theme.typography.font600.lineHeight,
   },
 }));
 
@@ -460,7 +447,23 @@ class Calendar extends React.PureComponent {
   render() {
     const {dates, hovered, selected} = this.state;
     return (
-      <Section>
+      <Card
+        overrides={{
+          Root: {
+            style: {
+              width: '100%',
+              maxWidth: '760px',
+            },
+          },
+          Contents: {
+            style: {
+              [FreightTheme.media.small]: {
+                margin: FreightTheme.sizing.scale900,
+              },
+            },
+          },
+        }}
+      >
         <Block
           display="flex"
           alignItems="center"
@@ -553,7 +556,7 @@ class Calendar extends React.PureComponent {
             Review Shipment
           </Button>
         </Block>
-      </Section>
+      </Card>
     );
   }
 }
