@@ -447,7 +447,9 @@ class Calendar extends React.PureComponent {
     });
   };
 
-  onClickReviewShipment = () => {
+  onClickReviewShipment = (event) => {
+    // Avoid focus on click
+    event.currentTarget && event.currentTarget.blur();
     this.setState({isReviewShipmentButtonLoading: true});
     setTimeout(() => {
       this.setState({isReviewShipmentButtonLoading: false});
