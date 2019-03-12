@@ -9,6 +9,21 @@ import {LightThemeMove, ThemeProvider, styled} from 'baseui';
 import React from 'react';
 import extend from 'just-extend';
 
+const FreightTheme = extend(true, LightThemeMove, {
+  breakpoints: {small: 769},
+  media: {small: '@media only screen and (min-width: 769px)'},
+  typography: {
+    font250: {fontFamily: 'UberMoveText-Medium'},
+    font350: {fontFamily: 'UberMoveText-Medium'},
+    font450: {fontFamily: 'UberMoveText-Medium'},
+    font500: {fontFamily: 'UberMoveText-Medium'},
+    font600: {fontFamily: 'UberMoveText-Medium'},
+    font700: {fontFamily: 'UberMoveText-Medium'},
+    font800: {fontFamily: 'UberMoveText-Medium'},
+    font900: {fontFamily: 'UberMoveText-Medium'},
+  },
+});
+
 const Main = styled('main', {
   fontFamily: 'UberMove-Regular',
   width: '100%',
@@ -205,7 +220,7 @@ class Calendar extends React.PureComponent {
           ...(!i || d.date.getDate() === 1 ? {month: 'short'} : {}),
           day: 'numeric',
         }),
-        style: {color: LightThemeMove.colors.black},
+        style: {color: FreightTheme.colors.black},
       },
       style: {},
     };
@@ -213,43 +228,43 @@ class Calendar extends React.PureComponent {
     // Process price
     if (!d.price) {
       ret.disabled = true;
-      ret.style.color = LightThemeMove.colors.mono600;
-      ret.date.style.color = LightThemeMove.colors.mono600;
+      ret.style.color = FreightTheme.colors.mono600;
+      ret.date.style.color = FreightTheme.colors.mono600;
     }
 
     // Process quintile
     switch (d.quintile) {
       case 1:
       case 2:
-        ret.style.color = LightThemeMove.colors.positive;
+        ret.style.color = FreightTheme.colors.positive;
         break;
       default:
-        ret.style.color = LightThemeMove.colors.black;
+        ret.style.color = FreightTheme.colors.black;
     }
 
     // Process hovered
     if (hovered !== null) {
       if (hovered === i) {
-        ret.style.backgroundColor = LightThemeMove.colors.primary;
-        ret.style.color = LightThemeMove.colors.white;
-        ret.style.borderTopLeftRadius = LightThemeMove.sizing.scale300;
-        ret.style.borderBottomLeftRadius = LightThemeMove.sizing.scale300;
+        ret.style.backgroundColor = FreightTheme.colors.primary;
+        ret.style.color = FreightTheme.colors.white;
+        ret.style.borderTopLeftRadius = FreightTheme.sizing.scale300;
+        ret.style.borderBottomLeftRadius = FreightTheme.sizing.scale300;
         ret.style['::before'] = {content: '"Pickup"'};
-        ret.date.style.color = LightThemeMove.colors.white;
+        ret.date.style.color = FreightTheme.colors.white;
       } else if (hovered < i) {
         if (i < hovered + dateRange - 1) {
           ret.price = '';
-          ret.style.backgroundColor = LightThemeMove.colors.primary50;
-          ret.style.borderWidth = `${LightThemeMove.sizing.scale0} 0`;
-          ret.style.borderColor = LightThemeMove.colors.primary;
-          ret.date.style.color = LightThemeMove.colors.mono700;
+          ret.style.backgroundColor = FreightTheme.colors.primary50;
+          ret.style.borderWidth = `${FreightTheme.sizing.scale0} 0`;
+          ret.style.borderColor = FreightTheme.colors.primary;
+          ret.date.style.color = FreightTheme.colors.mono700;
         } else if (i === hovered + dateRange - 1) {
           ret.price = '';
-          ret.style.backgroundColor = LightThemeMove.colors.primary;
-          ret.style.color = LightThemeMove.colors.white;
-          ret.style.borderTopRightRadius = LightThemeMove.sizing.scale300;
-          ret.style.borderBottomRightRadius = LightThemeMove.sizing.scale300;
-          ret.date.style.color = LightThemeMove.colors.white;
+          ret.style.backgroundColor = FreightTheme.colors.primary;
+          ret.style.color = FreightTheme.colors.white;
+          ret.style.borderTopRightRadius = FreightTheme.sizing.scale300;
+          ret.style.borderBottomRightRadius = FreightTheme.sizing.scale300;
+          ret.date.style.color = FreightTheme.colors.white;
           ret.style['::before'] = {content: '"Dropoff"'};
         }
       }
@@ -260,6 +275,7 @@ class Calendar extends React.PureComponent {
 
   getDropoffDateAttributes = (d, i) => {
     const {dateRange, hovered, selected} = this.state;
+    const {pickup, dropoff} = selected;
 
     const ret = {
       price: this.getDollarString(d.price),
@@ -268,85 +284,81 @@ class Calendar extends React.PureComponent {
           ...(!i || d.date.getDate() === 1 ? {month: 'short'} : {}),
           day: 'numeric',
         }),
+        style: {color: FreightTheme.colors.black},
       },
       style: {},
     };
 
-    // Process price
-    if (!d.price) {
+    // Disable all except four options
+    if (i < pickup + dateRange - 1 || i >= pickup + dateRange + 3) {
       ret.disabled = true;
-      ret.style.color = LightThemeMove.colors.mono600;
-      ret.style.backgroundColor = LightThemeMove.colors.mono200;
     }
 
-    // Process quintile
-    switch (d.quintile) {
-      case 1:
-        ret.style.backgroundColor = LightThemeMove.colors.primary50;
-        break;
-      case 2:
-        ret.style.backgroundColor = LightThemeMove.colors.primary200;
-        break;
-      default:
+    // Process price
+    if (!d.price) {
+      ret.style.color = FreightTheme.colors.mono600;
+      ret.date.style.color = FreightTheme.colors.mono600;
     }
 
     // Process selected
-    if (d.price) {
-      const {pickup, dropoff} = selected;
-      if (i < pickup) {
-        ret.price = '';
-        ret.style.backgroundColor = LightThemeMove.colors.white;
-        ret.disabled = true;
-      } else if (i === pickup) {
-        ret.style.backgroundColor = LightThemeMove.colors.primary;
-        ret.style.color = LightThemeMove.colors.white;
-      } else if (i < pickup + dateRange || i <= dropoff) {
-        ret.style.backgroundColor = LightThemeMove.colors.primary200;
-        ret.style.color = LightThemeMove.colors.white;
-        ret.price = '';
-      } else if (!selected.dropoff && i > selected.pickup + dateRange - 1) {
-        const priceDifference = 150 * (i - selected.pickup - dateRange + 1);
-        ret.price = this.getDollarString(priceDifference, '+');
-        ret.style.color = LightThemeMove.colors.negative;
-        ret.date.style = {color: LightThemeMove.colors.mono800};
-        ret.style.backgroundColor = LightThemeMove.colors.white;
-      }
-
-      if (selected.dropoff) {
-        ret.disabled = true;
-        if (i === selected.pickup) {
-          const newPrice =
-            d.price + 150 * (1 + selected.dropoff - i - dateRange);
-          ret.price = this.getDollarString(newPrice);
-        } else if (i > selected.dropoff) {
-          ret.style.backgroundColor = LightThemeMove.colors.white;
-          ret.price = '';
-        }
-      }
+    if (i < pickup) {
+      ret.price = '';
+    } else if (i === pickup) {
+      ret.style.backgroundColor = FreightTheme.colors.primary;
+      ret.style.color = FreightTheme.colors.white;
+      ret.style.borderTopLeftRadius = FreightTheme.sizing.scale300;
+      ret.style.borderBottomLeftRadius = FreightTheme.sizing.scale300;
+      ret.style['::before'] = {content: '"Pickup"'};
+      ret.date.style.color = FreightTheme.colors.white;
+      const newPrice = d.price + 150 * (1 + dropoff - i - dateRange);
+      ret.price = this.getDollarString(newPrice);
+    } else if (i < dropoff) {
+      ret.price = '';
+      ret.style.backgroundColor = FreightTheme.colors.primary50;
+      ret.style.borderWidth = `${FreightTheme.sizing.scale0} 0`;
+      ret.style.borderColor = FreightTheme.colors.primary;
+      ret.style.color = FreightTheme.colors.mono700;
+      ret.date.style.color = FreightTheme.colors.mono700;
+    } else if (i === dropoff) {
+      ret.price = '';
+      ret.style.backgroundColor = FreightTheme.colors.primary;
+      ret.style.color = FreightTheme.colors.white;
+      ret.style.borderTopRightRadius = FreightTheme.sizing.scale300;
+      ret.style.borderBottomRightRadius = FreightTheme.sizing.scale300;
+      ret.date.style.color = FreightTheme.colors.white;
+      ret.style['::before'] = {content: '"Dropoff"'};
+    } else if (i > pickup + dateRange - 1 && i < pickup + dateRange + 3) {
+      const priceDifference = 150 * (i - pickup - dateRange + 1);
+      ret.price = this.getDollarString(priceDifference, '+');
+      ret.style.color = FreightTheme.colors.negative;
+    } else {
+      ret.price = '';
     }
 
     // Process hovered
     if (hovered !== null) {
-      if (!selected) {
-        if (hovered === i) {
-          ret.style.backgroundColor = LightThemeMove.colors.primary;
-          ret.style.color = LightThemeMove.colors.white;
-        } else if (hovered < i && i < hovered + dateRange) {
-          ret.style.backgroundColor = LightThemeMove.colors.primary;
-          ret.style.color = LightThemeMove.colors.white;
-          ret.price = '';
-        }
-      } else if (!selected.dropoff) {
-        if (i === selected.pickup && hovered >= selected.pickup + dateRange) {
-          const newPrice =
-            d.price + 150 * (1 + hovered - dateRange - selected.pickup);
-          ret.price = this.getDollarString(newPrice);
-        } else if (i > selected.pickup && i <= hovered) {
-          ret.style.backgroundColor = LightThemeMove.colors.primary;
-          ret.style.color = LightThemeMove.colors.white;
-          ret.date.style = {color: LightThemeMove.colors.white};
-          ret.price = '';
-        }
+      if (i === pickup) {
+        // Update price
+        const newPrice = d.price + 150 * (1 + hovered - dateRange - pickup);
+        ret.price = this.getDollarString(newPrice);
+      } else if (i > pickup && i < hovered) {
+        ret.price = '';
+        ret.style.backgroundColor = FreightTheme.colors.primary50;
+        ret.style.borderWidth = `${FreightTheme.sizing.scale0} 0`;
+        ret.style.borderColor = FreightTheme.colors.primary;
+        ret.style.color = FreightTheme.colors.mono700;
+        ret.date.style.color = FreightTheme.colors.mono700;
+        ret.style.borderTopRightRadius = 0;
+        ret.style.borderBottomRightRadius = 0;
+        ret.style['::before'] = {content: '""'};
+      } else if (i === hovered) {
+        ret.price = '';
+        ret.style.backgroundColor = FreightTheme.colors.primary;
+        ret.style.color = FreightTheme.colors.white;
+        ret.style.borderTopRightRadius = FreightTheme.sizing.scale300;
+        ret.style.borderBottomRightRadius = FreightTheme.sizing.scale300;
+        ret.date.style.color = FreightTheme.colors.white;
+        ret.style['::before'] = {content: '"Dropoff"'};
       }
     }
 
@@ -453,22 +465,7 @@ class Calendar extends React.PureComponent {
 }
 
 export default () => (
-  <ThemeProvider
-    theme={extend(true, LightThemeMove, {
-      breakpoints: {small: 769},
-      media: {small: '@media only screen and (min-width: 769px)'},
-      typography: {
-        font250: {fontFamily: 'UberMoveText-Medium'},
-        font350: {fontFamily: 'UberMoveText-Medium'},
-        font450: {fontFamily: 'UberMoveText-Medium'},
-        font500: {fontFamily: 'UberMoveText-Medium'},
-        font600: {fontFamily: 'UberMoveText-Medium'},
-        font700: {fontFamily: 'UberMoveText-Medium'},
-        font800: {fontFamily: 'UberMoveText-Medium'},
-        font900: {fontFamily: 'UberMoveText-Medium'},
-      },
-    })}
-  >
+  <ThemeProvider theme={FreightTheme}>
     <Main>
       <Calendar />
     </Main>
