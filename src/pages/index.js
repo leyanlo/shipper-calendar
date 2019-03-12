@@ -144,7 +144,7 @@ const Price = styled('span', ({$style, $theme}) =>
   mergeStyleOverrides(
     {
       pointerEvents: 'none',
-      ...$theme.typography.font200,
+      ...$theme.typography.font250,
       minHeight: $theme.typography.font300.lineHeight,
       [$theme.media.small]: {
         ...$theme.typography.font450,
