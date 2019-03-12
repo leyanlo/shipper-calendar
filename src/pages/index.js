@@ -321,12 +321,11 @@ class Calendar extends React.PureComponent {
       ? this.getDropoffDateAttributes(d, i)
       : this.getPricingDateAttributes(d, i);
     return (
-      <AspectRatioBox>
+      <AspectRatioBox key={`date-${i}`}>
         <DateButton
           $disabled={dateAttributes.disabled}
           $style={dateAttributes.style}
           disabled={dateAttributes.disabled}
-          key={i}
           onBlur={this.onHover(null)}
           onClick={this.onClickDate(i)}
           onFocus={this.onHover(i)}
@@ -397,7 +396,7 @@ class Calendar extends React.PureComponent {
         </Block>
         <Grid>
           {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, i) => (
-            <Day key={i}>{day}</Day>
+            <Day key={`day-${i}`}>{day}</Day>
           ))}
           {dates.map(this.getDate)}
         </Grid>
