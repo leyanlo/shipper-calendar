@@ -7,6 +7,7 @@ import {
 } from 'baseui/button';
 import {LightThemeMove, ThemeProvider, styled} from 'baseui';
 import {Paragraph2} from 'baseui/typography';
+import {mergeStyleOverrides} from 'baseui/helpers/overrides';
 import React from 'react';
 import extend from 'just-extend';
 
@@ -152,15 +153,20 @@ const DateSpan = styled('span', ({$style, $theme}) => ({
   ...$style,
 }));
 
-const Price = styled('span', ({$theme}) => ({
-  ...$theme.typography.font200,
-  minHeight: $theme.typography.font200.lineHeight,
-  [$theme.media.small]: {
-    ...$theme.typography.font450,
-    minHeight: $theme.typography.font450.lineHeight,
-    fontVariantNumeric: 'tabular-nums',
-  },
-}));
+const Price = styled('span', ({$style, $theme}) =>
+  mergeStyleOverrides(
+    {
+      ...$theme.typography.font200,
+      minHeight: $theme.typography.font300.lineHeight,
+      [$theme.media.small]: {
+        ...$theme.typography.font450,
+        minHeight: $theme.typography.font500.lineHeight,
+        fontVariantNumeric: 'tabular-nums',
+      },
+    },
+    $style
+  )
+);
 
 const B = styled('b', {fontFamily: 'UberMoveText-Bold'});
 
@@ -227,7 +233,10 @@ class Calendar extends React.PureComponent {
     const {dateRange, hovered} = this.state;
 
     const ret = {
-      price: this.getDollarString(d.price),
+      price: {
+        content: this.getDollarString(d.price),
+        style: {},
+      },
       date: {
         content: d.date.toLocaleDateString('en-US', {
           ...(!i || d.date.getDate() === 1 ? {month: 'short'} : {}),
@@ -264,15 +273,19 @@ class Calendar extends React.PureComponent {
         ret.style.borderBottomLeftRadius = FreightTheme.sizing.scale300;
         ret.style['::before'] = {content: '"Pickup"'};
         ret.date.style.color = FreightTheme.colors.white;
+        ret.price.style.fontSize = FreightTheme.typography.font300.fontSize;
+        ret.price.style[FreightTheme.media.small] = {
+          fontSize: FreightTheme.typography.font500.fontSize,
+        };
       } else if (hovered < i) {
         if (i < hovered + dateRange - 1) {
-          ret.price = '';
+          ret.price.content = '';
           ret.style.backgroundColor = FreightTheme.colors.primary50;
           ret.style.borderWidth = `${FreightTheme.sizing.scale0} 0`;
           ret.style.borderColor = FreightTheme.colors.primary;
           ret.date.style.color = FreightTheme.colors.mono700;
         } else if (i === hovered + dateRange - 1) {
-          ret.price = '';
+          ret.price.content = '';
           ret.style.backgroundColor = FreightTheme.colors.primary;
           ret.style.color = FreightTheme.colors.white;
           ret.style.borderTopRightRadius = FreightTheme.sizing.scale300;
@@ -291,7 +304,10 @@ class Calendar extends React.PureComponent {
     const {pickup, dropoff} = selected;
 
     const ret = {
-      price: this.getDollarString(d.price),
+      price: {
+        content: this.getDollarString(d.price),
+        style: {},
+      },
       date: {
         content: d.date.toLocaleDateString('en-US', {
           ...(!i || d.date.getDate() === 1 ? {month: 'short'} : {}),
@@ -315,7 +331,7 @@ class Calendar extends React.PureComponent {
 
     // Process selected
     if (i < pickup) {
-      ret.price = '';
+      ret.price.content = '';
     } else if (i === pickup) {
       ret.style.backgroundColor = FreightTheme.colors.primary;
       ret.style.color = FreightTheme.colors.white;
@@ -324,16 +340,20 @@ class Calendar extends React.PureComponent {
       ret.style['::before'] = {content: '"Pickup"'};
       ret.date.style.color = FreightTheme.colors.white;
       const newPrice = d.price + 150 * (1 + dropoff - i - dateRange);
-      ret.price = this.getDollarString(newPrice);
+      ret.price.content = this.getDollarString(newPrice);
+      ret.price.style.fontSize = FreightTheme.typography.font300.fontSize;
+      ret.price.style[FreightTheme.media.small] = {
+        fontSize: FreightTheme.typography.font500.fontSize,
+      };
     } else if (i < dropoff) {
-      ret.price = '';
+      ret.price.content = '';
       ret.style.backgroundColor = FreightTheme.colors.primary50;
       ret.style.borderWidth = `${FreightTheme.sizing.scale0} 0`;
       ret.style.borderColor = FreightTheme.colors.primary;
       ret.style.color = FreightTheme.colors.mono700;
       ret.date.style.color = FreightTheme.colors.mono700;
     } else if (i === dropoff) {
-      ret.price = '';
+      ret.price.content = '';
       ret.style.backgroundColor = FreightTheme.colors.primary;
       ret.style.color = FreightTheme.colors.white;
       ret.style.borderTopRightRadius = FreightTheme.sizing.scale300;
@@ -342,11 +362,11 @@ class Calendar extends React.PureComponent {
       ret.style['::before'] = {content: '"Dropoff"'};
     } else if (i > pickup + dateRange - 1 && i < pickup + dateRange + 3) {
       const priceDifference = 150 * (i - pickup - dateRange + 1);
-      ret.price = this.getDollarString(priceDifference, '+');
+      ret.price.content = this.getDollarString(priceDifference, '+');
       ret.style.color = FreightTheme.colors.negative;
       ret.date.style.color = FreightTheme.colors.black;
     } else {
-      ret.price = '';
+      ret.price.content = '';
     }
 
     // Process hovered
@@ -354,9 +374,9 @@ class Calendar extends React.PureComponent {
       if (i === pickup) {
         // Update price
         const newPrice = d.price + 150 * (1 + hovered - dateRange - pickup);
-        ret.price = this.getDollarString(newPrice);
+        ret.price.content = this.getDollarString(newPrice);
       } else if (i > pickup && i < hovered) {
-        ret.price = '';
+        ret.price.content = '';
         ret.style.backgroundColor = FreightTheme.colors.primary50;
         ret.style.borderWidth = `${FreightTheme.sizing.scale0} 0`;
         ret.style.borderColor = FreightTheme.colors.primary;
@@ -366,7 +386,7 @@ class Calendar extends React.PureComponent {
         ret.style.borderBottomRightRadius = 0;
         ret.style['::before'] = {content: '""'};
       } else if (i === hovered) {
-        ret.price = '';
+        ret.price.content = '';
         ret.style.borderWidth = 0;
         ret.style.backgroundColor = FreightTheme.colors.primary;
         ret.style.color = FreightTheme.colors.white;
@@ -376,7 +396,7 @@ class Calendar extends React.PureComponent {
         ret.style['::before'] = {content: '"Dropoff"'};
       } else if (i > hovered && i < pickup + dateRange + 3) {
         const priceDifference = 150 * (i - pickup - dateRange + 1);
-        ret.price = this.getDollarString(priceDifference, '+');
+        ret.price.content = this.getDollarString(priceDifference, '+');
         ret.date.style.color = FreightTheme.colors.black;
         ret.style.backgroundColor = FreightTheme.colors.white;
         ret.style.borderWidth = 0;
@@ -408,7 +428,9 @@ class Calendar extends React.PureComponent {
           <DateSpan $style={dateAttributes.date.style}>
             {dateAttributes.date.content}
           </DateSpan>
-          <Price>{dateAttributes.price}</Price>
+          <Price $style={dateAttributes.price.style}>
+            {dateAttributes.price.content}
+          </Price>
         </DateButton>
       </AspectRatioBox>
     );
