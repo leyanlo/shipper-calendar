@@ -343,6 +343,7 @@ class Calendar extends React.PureComponent {
       const priceDifference = 150 * (i - pickup - dateRange + 1);
       ret.price = this.getDollarString(priceDifference, '+');
       ret.style.color = FreightTheme.colors.negative;
+      ret.date.style.color = FreightTheme.colors.black;
     } else {
       ret.price = '';
     }
