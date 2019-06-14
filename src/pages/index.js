@@ -211,18 +211,7 @@ class Calendar extends React.PureComponent {
   };
 
   getDollarString = (dollars, prefix) =>
-    (dollars &&
-      [
-        prefix || '',
-        '$',
-        ...dollars
-          .toString()
-          .split('')
-          .map((char, i, splitted) =>
-            i && (splitted.length - i) % 3 === 0 ? `,${char}` : char
-          ),
-      ].join('')) ||
-    '';
+    (dollars && [prefix || '', '$', dollars.toLocaleString()].join('')) || '';
 
   getPricingDateAttributes = (d, i) => {
     const {dateRange, hovered} = this.state;
